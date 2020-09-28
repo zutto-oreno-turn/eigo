@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
-
 
 [Serializable]
 public class Questions
@@ -33,12 +31,6 @@ public class PlayPanel : MonoBehaviour
     {
         Debug.Log("PlayPanel#Start");
         StartCoroutine(APIExample());
-    }
-
-    public void OnClickReturnButton()
-    {
-        Debug.Log("OnClickReturnButton from Play");
-        SceneManager.LoadScene("Title");
     }
 
     IEnumerator APIExample()
