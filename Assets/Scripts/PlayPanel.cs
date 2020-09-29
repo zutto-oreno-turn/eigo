@@ -13,7 +13,6 @@ public class Questions
 public class Question
 {
     public string id;
-    public string category;
     public Profile profile;
     public string sentence;
 }
@@ -35,14 +34,16 @@ public class PlayPanel : MonoBehaviour
 
     IEnumerator APIExample()
     {
-        string url = "https://zutto-oreno-turn.github.io/cdn/eigo/question/v1.json";
+        string url = "https://zutto-oreno-turn.github.io/cdn/eigo/question/category/custom/v1.json";
+        // string url = "https://zutto-oreno-turn.github.io/cdn/eigo/question/category/news/v1.json";
+        // string url = "https://zutto-oreno-turn.github.io/cdn/eigo/question/category/quote/v1.json";
+        // string url = "https://zutto-oreno-turn.github.io/cdn/eigo/question/category/tweet/v1.json";
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();
 
         Questions data = JsonUtility.FromJson<Questions>(request.downloadHandler.text);
         Debug.Log(data.questions[0].id);
-        Debug.Log(data.questions[0].category);
         Debug.Log(data.questions[0].profile.name);
         Debug.Log(data.questions[0].profile.image);
         Debug.Log(data.questions[0].sentence);
