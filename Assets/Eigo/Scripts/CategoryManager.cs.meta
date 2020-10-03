@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 283d7b765edc3054dbb3b6d6a94eb33e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Hoge: {instanceID: 0}
+  - CategoryButtonPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

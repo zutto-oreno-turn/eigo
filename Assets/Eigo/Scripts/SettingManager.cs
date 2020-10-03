@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SettingPanel : MonoBehaviour
+public class SettingManager : MonoBehaviour
 {
     void Start() {
-        Debug.Log("SettingPanel#Start");
+        Debug.Log("SettingManager.cs#Start");
     }
 
     public void OnClickReturnButton() {
-        Debug.Log("OnClickReturnButton from Setting");
+        Debug.Log("SettingManager.cs#OnClickReturnButton");
         SceneManager.LoadScene("Title");
     }
 }
