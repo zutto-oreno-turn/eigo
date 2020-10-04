@@ -16,7 +16,8 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator APIExample()
     {
-        string url = $"https://zutto-oreno-turn.github.io/cdn/eigo/question/category/{CategoryManager.SelectedCategoryName}/v1.json";
+        string url = $"https://zutto-oreno-turn.github.io/cdn/eigo/question/category/news/v1.json";
+        // string url = $"https://zutto-oreno-turn.github.io/cdn/eigo/question/category/{CategoryManager.SelectedCategoryName}/v1.json";
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();
