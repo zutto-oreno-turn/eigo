@@ -11,7 +11,8 @@ public class TitleManager : MonoBehaviour
     public void OnClickPlayButton()
     {
         Debug.Log("TitleManager.cs#OnClickPlayButton");
-        SceneManager.LoadScene("Category");
+        // SceneManager.LoadScene("Category");
+        SceneManager.LoadScene("Play");
     }
 
     public void OnClickSettingButton()
