@@ -1,5 +1,4 @@
 ﻿using Eigo.Models;
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -7,6 +6,7 @@ using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
+    public GameObject AnswerText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
 
@@ -44,7 +44,7 @@ public class PlayManager : MonoBehaviour
     void MakePlayScreen()
     {
         Debug.Log("PlayManager.cs#MakePlayScreen");
-        string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
+        string[] sentences = ShuffleSentences(Questions[CurrentQuestionNumber].sentence.Split(' '));
 
         int x = -350, y = 135;
         foreach (string sentence in sentences)
@@ -57,9 +57,12 @@ public class PlayManager : MonoBehaviour
             Text wordButtonText = wordButton.GetComponentInChildren<Text>();
             wordButtonText.text = sentence;
 
-            if (x < -200) {
+            if (x < -200)
+            {
                 x += 130;
-            } else {
+            }
+            else
+            {
                 x = -350;
                 y -= 70;
             }
@@ -68,7 +71,43 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    void OnClickWordButton(string word) {
+    string[] ShuffleSentences(string[] sentences)
+    {
+        Debug.Log("PlayManager.cs#ShuffleSentences");
+        for (int i = 0; i < sentences.Length; i++)
+        {
+            string tmp = sentences[i];
+            int randomIndex = Random.Range(i, sentences.Length);
+            sentences[i] = sentences[randomIndex];
+            sentences[randomIndex] = tmp;
+        }
+        return sentences;
+    }
+
+    void OnClickWordButton(string word)
+    {
         Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
+        string test = AnswerText.GetComponent<Text>().text + word;
+        string correct = Questions[CurrentQuestionNumber].sentence.Substring(0, test.Length);
+
+        if (test != correct)
+        {
+            Debug.Log("PlayManager.cs#OnClickWordButton Wrong 1: " + test);
+            Debug.Log("PlayManager.cs#OnClickWordButton Wrong 2: " + correct);
+            return;
+        }
+
+        Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
+        AnswerText.GetComponent<Text>().text = test + " ";
+
+        if (test.Length == Questions[CurrentQuestionNumber].sentence.Length)
+        {
+            Debug.Log("PlayManager.cs#OnClickWordButton Clear !");
+            AnswerText.GetComponent<Text>().text = "";
+            CurrentQuestionNumber++;
+            // [TODO] Content配下にあるGameObject削除しないと
+            MakePlayScreen();
+
+        }
     }
 }
