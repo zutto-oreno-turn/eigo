@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayManager : MonoBehaviour
 {
@@ -30,6 +31,9 @@ public class PlayManager : MonoBehaviour
 
         QuestionParser data = JsonUtility.FromJson<QuestionParser>(request.downloadHandler.text);
         Questions = data.questions;
+
+        // I will NEVER let you down!
+        // Just landed in Atlanta, Georgia. On my way now, see everyone shortly!
 
         // foreach (Question Question in Questions)
         // {
@@ -102,12 +106,28 @@ public class PlayManager : MonoBehaviour
 
         if (test.Length == Questions[CurrentQuestionNumber].sentence.Length)
         {
-            Debug.Log("PlayManager.cs#OnClickWordButton Clear !");
+            Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 1 : " + CurrentQuestionNumber);
+            Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 2 : " + Questions.Length);
+            if (CurrentQuestionNumber == Questions.Length - 1)
+            {
+                Debug.Log("PlayManager.cs#OnClickWordButton All Clear !");
+                SceneManager.LoadScene("Break");
+                return;
+            }
             AnswerText.GetComponent<Text>().text = "";
             CurrentQuestionNumber++;
-            // [TODO] Content配下にあるGameObject削除しないと
+            DestroyWordButton();
             MakePlayScreen();
+        }
+    }
 
+    void DestroyWordButton()
+    {
+        Debug.Log("PlayManager.cs#DestroyWordButton 1");
+        foreach (Transform children in WordContent.transform)
+        {
+            Debug.Log("PlayManager.cs#DestroyWordButton 2: " + children.gameObject.name);
+            GameObject.Destroy(children.gameObject);
         }
     }
 }
