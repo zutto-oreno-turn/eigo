@@ -1,4 +1,5 @@
 ﻿using Eigo.Models;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -13,6 +14,7 @@ public class PlayManager : MonoBehaviour
 
     Question[] Questions;
     int CurrentQuestionNumber = 0;
+    int Level = 1;
 
     void Start()
     {
@@ -23,43 +25,32 @@ public class PlayManager : MonoBehaviour
     IEnumerator GetQuestion()
     {
         Debug.Log("PlayManager.cs#GetQuestion");
-        // string url = $"https://zutto-oreno-turn.github.io/cdn/eigo/question/category/{CategoryManager.SelectedCategoryName}/v1.json";
-        string url = $"https://zutto-oreno-turn.github.io/cdn/eigo/question/category/tweet/v1.json";
+        string url = $"https://www.zutto-oreno-turn.com/cdn/eigo/question/category/tweet/realDonaldTrump.json";
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();
 
         QuestionParser data = JsonUtility.FromJson<QuestionParser>(request.downloadHandler.text);
         Questions = data.questions;
-
-        // I will NEVER let you down!
-        // Just landed in Atlanta, Georgia. On my way now, see everyone shortly!
-
-        // foreach (Question Question in Questions)
-        // {
-        //     Debug.Log(Question.id);
-        //     Debug.Log(Question.profile.name);
-        //     Debug.Log(Question.profile.image);
-        //     Debug.Log(Question.sentence);
-        // }
         MakePlayScreen();
     }
 
     void MakePlayScreen()
     {
-        Debug.Log("PlayManager.cs#MakePlayScreen");
-        string[] sentences = ShuffleSentences(Questions[CurrentQuestionNumber].sentence.Split(' '));
+        Debug.Log("PlayManager.cs#MakePlayScreen 1: " + Questions[CurrentQuestionNumber].sentence);
+        string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
+        string[] shuffledSentences = MakeShuffleSentences(sentences);
+        string[] maskedSentences = MakeMaskedSentences(sentences, shuffledSentences);
+        AnswerText.GetComponent<Text>().text = string.Join(" ", maskedSentences);
 
         int x = -350, y = 135;
-        foreach (string sentence in sentences)
+        for (int i = 0; i < Level + 2; i++)
         {
-            Debug.Log($"{sentence}, x:{x}, y:{y}");
-
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(x, y, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
             Text wordButtonText = wordButton.GetComponentInChildren<Text>();
-            wordButtonText.text = sentence;
+            wordButtonText.text = shuffledSentences[i];
 
             if (x < -200)
             {
@@ -70,22 +61,51 @@ public class PlayManager : MonoBehaviour
                 x = -350;
                 y -= 70;
             }
-
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonText.text));
         }
     }
 
-    string[] ShuffleSentences(string[] sentences)
+    string[] MakeShuffleSentences(string[] sentences)
     {
-        Debug.Log("PlayManager.cs#ShuffleSentences");
-        for (int i = 0; i < sentences.Length; i++)
+        Debug.Log("PlayManager.cs#MakeShuffleSentences");
+        string[] shuffledSentences = new string[sentences.Length];
+        Array.Copy(sentences, shuffledSentences, sentences.Length);
+        for (int i = 0; i < shuffledSentences.Length; i++)
         {
-            string tmp = sentences[i];
-            int randomIndex = Random.Range(i, sentences.Length);
-            sentences[i] = sentences[randomIndex];
-            sentences[randomIndex] = tmp;
+            string tmp = shuffledSentences[i];
+            int randomIndex = UnityEngine.Random.Range(i, shuffledSentences.Length);
+            shuffledSentences[i] = shuffledSentences[randomIndex];
+            shuffledSentences[randomIndex] = tmp;
         }
-        return sentences;
+        return shuffledSentences;
+    }
+
+    string[] MakeMaskedSentences(string[] sentences, string[] shuffled)
+    {
+        Debug.Log("PlayManager.cs#MakeMaskedSentences");
+        string[] maskedSentences = new string[sentences.Length];
+        Array.Copy(sentences, maskedSentences, sentences.Length);
+        for (int i = 0; i < Level + 2; i++)
+        {
+            for (int j = 0; j < maskedSentences.Length; j++)
+            {
+                if (maskedSentences[j] == shuffled[i])
+                {
+                    maskedSentences[j] = "*****";
+                    break;
+                }
+            }
+        }
+        int count = 1;
+        for (int i = 0; i < maskedSentences.Length; i++)
+        {
+            if (maskedSentences[i] == "*****")
+            {
+                maskedSentences[i] = $"***({count})***";
+                count++;
+            }
+        }
+        return maskedSentences;
     }
 
     void OnClickWordButton(string word)
