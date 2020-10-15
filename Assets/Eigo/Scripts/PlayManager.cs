@@ -8,13 +8,16 @@ using UnityEngine.SceneManagement;
 
 public class PlayManager : MonoBehaviour
 {
+
     public GameObject AnswerText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
 
     Question[] Questions;
+
     int CurrentQuestionNumber = 0;
-    int Level = 1;
+    int ChoiceNumber = 2;
+    int AnserNumber = 1;
 
     void Start()
     {
@@ -39,18 +42,18 @@ public class PlayManager : MonoBehaviour
     {
         Debug.Log("PlayManager.cs#MakePlayScreen 1: " + Questions[CurrentQuestionNumber].sentence);
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
-        string[] shuffledSentences = MakeShuffleSentences(sentences);
-        string[] maskedSentences = MakeMaskedSentences(sentences, shuffledSentences);
-        AnswerText.GetComponent<Text>().text = string.Join(" ", maskedSentences);
+        string[] shuffles = MakeShuffleSentences(sentences);
+        string[] masks = MakeMaskedSentences(sentences, shuffles);
+        AnswerText.GetComponent<Text>().text = string.Join(" ", masks);
 
         int x = -350, y = 135;
-        for (int i = 0; i < Level + 2; i++)
+        for (int i = 0; i < ChoiceNumber; i++)
         {
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(x, y, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
             Text wordButtonText = wordButton.GetComponentInChildren<Text>();
-            wordButtonText.text = shuffledSentences[i];
+            wordButtonText.text = shuffles[i];
 
             if (x < -200)
             {
@@ -68,77 +71,101 @@ public class PlayManager : MonoBehaviour
     string[] MakeShuffleSentences(string[] sentences)
     {
         Debug.Log("PlayManager.cs#MakeShuffleSentences");
-        string[] shuffledSentences = new string[sentences.Length];
-        Array.Copy(sentences, shuffledSentences, sentences.Length);
-        for (int i = 0; i < shuffledSentences.Length; i++)
+        string[] shuffles = new string[sentences.Length];
+        Array.Copy(sentences, shuffles, sentences.Length);
+        for (int i = 0; i < shuffles.Length; i++)
         {
-            string tmp = shuffledSentences[i];
-            int randomIndex = UnityEngine.Random.Range(i, shuffledSentences.Length);
-            shuffledSentences[i] = shuffledSentences[randomIndex];
-            shuffledSentences[randomIndex] = tmp;
+            string tmp = shuffles[i];
+            int randomIndex = UnityEngine.Random.Range(i, shuffles.Length);
+            shuffles[i] = shuffles[randomIndex];
+            shuffles[randomIndex] = tmp;
         }
-        return shuffledSentences;
+        return shuffles;
     }
 
-    string[] MakeMaskedSentences(string[] sentences, string[] shuffled)
+    string[] MakeMaskedSentences(string[] sentences, string[] shuffles)
     {
-        Debug.Log("PlayManager.cs#MakeMaskedSentences");
-        string[] maskedSentences = new string[sentences.Length];
-        Array.Copy(sentences, maskedSentences, sentences.Length);
-        for (int i = 0; i < Level + 2; i++)
+        Debug.Log("PlayManager.cs#MakeMaskedSentences 1");
+        string[] masks = new string[sentences.Length];
+        Array.Copy(sentences, masks, sentences.Length);
+        for (int i = 0; i < ChoiceNumber; i++)
         {
-            for (int j = 0; j < maskedSentences.Length; j++)
+            for (int j = 0; j < masks.Length; j++)
             {
-                if (maskedSentences[j] == shuffled[i])
+                if (masks[j] == shuffles[i])
                 {
-                    maskedSentences[j] = "*****";
+                    masks[j] = "*****";
                     break;
                 }
             }
         }
         int count = 1;
-        for (int i = 0; i < maskedSentences.Length; i++)
+        for (int i = 0; i < masks.Length; i++)
         {
-            if (maskedSentences[i] == "*****")
+            if (masks[i] == "*****")
             {
-                maskedSentences[i] = $"***({count})***";
+                masks[i] = $"***({count})***";
                 count++;
             }
         }
-        return maskedSentences;
+        return masks;
     }
 
     void OnClickWordButton(string word)
     {
         Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
-        string test = AnswerText.GetComponent<Text>().text + word;
-        string correct = Questions[CurrentQuestionNumber].sentence.Substring(0, test.Length);
 
-        if (test != correct)
+        string text = AnswerText.GetComponent<Text>().text;
+
+        int maskLocation = text.IndexOf($"***({AnserNumber})***");
+        int maskLength = maskLocation + word.Length + 1;
+        int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
+        if (maskLength > correctLength) {
+            maskLength = correctLength;    
+        }
+
+        string anser = text.Replace($"***({AnserNumber})***", word);
+        string anserPart = anser.Substring(0, maskLength);
+        string correctPart = Questions[CurrentQuestionNumber].sentence.Substring(0, maskLength);
+
+        Debug.Log("anserPart: " + anserPart);
+        Debug.Log("correctPart: " + correctPart);
+
+        if (anserPart != correctPart)
         {
-            Debug.Log("PlayManager.cs#OnClickWordButton Wrong 1: " + test);
-            Debug.Log("PlayManager.cs#OnClickWordButton Wrong 2: " + correct);
+            Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
             return;
         }
 
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
-        AnswerText.GetComponent<Text>().text = test + " ";
+        AnswerText.GetComponent<Text>().text = anser;
 
-        if (test.Length == Questions[CurrentQuestionNumber].sentence.Length)
+        if (AnserNumber < ChoiceNumber) {
+            AnserNumber++;
+            return;
+        }
+
+        Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 1 : " + CurrentQuestionNumber);
+        Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 2 : " + Questions.Length);
+
+        // [todo] 正解したら正解文をみたいので、次の問題へボタンがほしい
+
+        if (CurrentQuestionNumber < Questions.Length - 1)
         {
-            Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 1 : " + CurrentQuestionNumber);
-            Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 2 : " + Questions.Length);
-            if (CurrentQuestionNumber == Questions.Length - 1)
-            {
-                Debug.Log("PlayManager.cs#OnClickWordButton All Clear !");
-                SceneManager.LoadScene("Break");
-                return;
-            }
-            AnswerText.GetComponent<Text>().text = "";
             CurrentQuestionNumber++;
+            AnserNumber = 1;
+            AnswerText.GetComponent<Text>().text = "";
             DestroyWordButton();
             MakePlayScreen();
+            return;
         }
+
+        Debug.Log("PlayManager.cs#OnClickWordButton All Clear !");
+        SceneManager.LoadScene("Break");
+    }
+
+    bool IsCorrect(string word) {
+        return false;
     }
 
     void DestroyWordButton()
