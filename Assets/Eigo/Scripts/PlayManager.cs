@@ -28,7 +28,7 @@ public class PlayManager : MonoBehaviour
     IEnumerator GetQuestion()
     {
         Debug.Log("PlayManager.cs#GetQuestion");
-        string url = $"https://www.zutto-oreno-turn.com/cdn/eigo/question/category/tweet/realDonaldTrump.json";
+        string url = $"https://www.zutto-oreno-turn.com/cdn/eigo/question/category/tweet/CNN.json";
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();

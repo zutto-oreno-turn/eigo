@@ -12,6 +12,7 @@
     public class Question
     {
         public string id;
+        public string date;
         public Profile profile;
         public string sentence;
     }
