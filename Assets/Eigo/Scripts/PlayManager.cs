@@ -1,6 +1,7 @@
 ﻿using Eigo.Models;
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -44,7 +45,7 @@ public class PlayManager : MonoBehaviour
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
         string[] shuffles = MakeShuffleSentences(sentences);
         string[] masks = MakeMaskedSentences(sentences, shuffles);
-        AnswerText.GetComponent<Text>().text = string.Join(" ", masks);
+        AnswerText.GetComponent<TextMeshProUGUI>().text = string.Join(" ", masks);
 
         int x = -350, y = 135;
         for (int i = 0; i < ChoiceNumber; i++)
@@ -52,7 +53,7 @@ public class PlayManager : MonoBehaviour
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(x, y, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
-            Text wordButtonText = wordButton.GetComponentInChildren<Text>();
+            TextMeshProUGUI wordButtonText = wordButton.GetComponentInChildren<TextMeshProUGUI>();
             wordButtonText.text = shuffles[i];
 
             if (x < -200)
@@ -115,7 +116,7 @@ public class PlayManager : MonoBehaviour
     {
         Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
 
-        string text = AnswerText.GetComponent<Text>().text;
+        string text = AnswerText.GetComponent<TextMeshProUGUI>().text;
 
         int maskLocation = text.IndexOf($"***({AnserNumber})***");
         int maskLength = maskLocation + word.Length + 1;
@@ -138,7 +139,7 @@ public class PlayManager : MonoBehaviour
         }
 
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
-        AnswerText.GetComponent<Text>().text = anser;
+        AnswerText.GetComponent<TextMeshProUGUI>().text = anser;
 
         if (AnserNumber < ChoiceNumber) {
             AnserNumber++;
@@ -154,7 +155,7 @@ public class PlayManager : MonoBehaviour
         {
             CurrentQuestionNumber++;
             AnserNumber = 1;
-            AnswerText.GetComponent<Text>().text = "";
+            AnswerText.GetComponent<TextMeshProUGUI>().text = "";
             DestroyWordButton();
             MakePlayScreen();
             return;
