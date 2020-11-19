@@ -47,7 +47,20 @@ public class PlayManager : MonoBehaviour
         string[] masks = MakeMaskedSentences(sentences, shuffles);
         AnswerText.GetComponent<TextMeshProUGUI>().text = string.Join(" ", masks);
 
-        int x = -350, y = 135;
+
+        GameObject anserPanelObject = GameObject.Find("AnserPanel");
+        RectTransform rect = anserPanelObject.GetComponent<RectTransform>();
+        Debug.Log("AnserPanel1" + rect.sizeDelta);
+        Debug.Log("AnserPanel2" + rect.rect);
+
+        GameObject text1Object = GameObject.Find("Text1");
+        TextMeshProUGUI text = text1Object.GetComponent<TextMeshProUGUI>();
+        float width = text.preferredWidth;
+        float height = text.preferredHeight;
+        Debug.Log("Text1 width: " + width + ", height:" + height);
+ 
+
+        int x = -350, y = 60;
         for (int i = 0; i < ChoiceNumber; i++)
         {
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(x, y, 0), Quaternion.identity);
