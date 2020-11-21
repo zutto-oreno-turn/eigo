@@ -10,7 +10,9 @@ using UnityEngine.SceneManagement;
 public class PlayManager : MonoBehaviour
 {
 
-    public GameObject AnswerText;
+    public GameObject AnswerText; // [todo] 削除する
+    public GameObject MaskPanel;
+    public GameObject SentenceTextPrefab;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
 
@@ -48,35 +50,46 @@ public class PlayManager : MonoBehaviour
         AnswerText.GetComponent<TextMeshProUGUI>().text = string.Join(" ", masks);
 
 
-        GameObject anserPanelObject = GameObject.Find("AnserPanel");
-        RectTransform rect = anserPanelObject.GetComponent<RectTransform>();
-        Debug.Log("AnserPanel1" + rect.sizeDelta);
-        Debug.Log("AnserPanel2" + rect.rect);
+        RectTransform rectTransform = MaskPanel.GetComponent<RectTransform>();
+        Debug.Log("MaskPanel" + rectTransform.rect.width);
+        // Debug.Log("AnserPanel1" + rect.sizeDelta); // AnserPanel1(-20.0, 200.0)
+        // Debug.Log("AnserPanel2" + rect.rect);      // AnserPanel2(x:0.00, y:-200.00, width:340.00, height:200.00)
 
-        GameObject text1Object = GameObject.Find("Text1");
-        TextMeshProUGUI text = text1Object.GetComponent<TextMeshProUGUI>();
-        float width = text.preferredWidth;
-        float height = text.preferredHeight;
-        Debug.Log("Text1 width: " + width + ", height:" + height);
- 
 
-        int x = -350, y = 60;
+        float sx = 0, sy = 0;
+        for (int i = 0; i < sentences.Length; i++)
+        {
+            GameObject sentenceText = Instantiate(SentenceTextPrefab, new Vector3(sx, sy, 0), Quaternion.identity);
+            sentenceText.transform.SetParent(MaskPanel.transform, false);
+
+            TextMeshProUGUI textMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
+            textMeshProUGUI.text = sentences[i];
+
+            sx += textMeshProUGUI.preferredWidth + 5;
+            if (sx > rectTransform.rect.width) {
+                sx = 0;
+                sy -= 20;
+                sentenceText.transform.position = new Vector3(sx, sy, 0);
+            }
+        }
+
+        float ax = -350, ay = 60;
         for (int i = 0; i < ChoiceNumber; i++)
         {
-            GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(x, y, 0), Quaternion.identity);
+            GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(ax, ay, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
             TextMeshProUGUI wordButtonText = wordButton.GetComponentInChildren<TextMeshProUGUI>();
             wordButtonText.text = shuffles[i];
 
-            if (x < -200)
+            if (ax < -200)
             {
-                x += 130;
+                ax += 130;
             }
             else
             {
-                x = -350;
-                y -= 70;
+                ax = -350;
+                ay -= 70;
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonText.text));
         }
