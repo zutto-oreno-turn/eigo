@@ -9,12 +9,13 @@ using UnityEngine.SceneManagement;
 
 public class PlayManager : MonoBehaviour
 {
-
     public GameObject AnswerText; // [todo] 削除する
     public GameObject MaskPanel;
     public GameObject SentenceTextPrefab;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
+
+    const int SpacePx = 5;
 
     Question[] Questions;
 
@@ -49,13 +50,7 @@ public class PlayManager : MonoBehaviour
         string[] masks = MakeMaskedSentences(sentences, shuffles);
         AnswerText.GetComponent<TextMeshProUGUI>().text = string.Join(" ", masks);
 
-
-        RectTransform rectTransform = MaskPanel.GetComponent<RectTransform>();
-        Debug.Log("MaskPanel" + rectTransform.rect.width);
-        // Debug.Log("AnserPanel1" + rect.sizeDelta); // AnserPanel1(-20.0, 200.0)
-        // Debug.Log("AnserPanel2" + rect.rect);      // AnserPanel2(x:0.00, y:-200.00, width:340.00, height:200.00)
-
-
+        float maskPanelWidth = MaskPanel.GetComponent<RectTransform>().rect.width;
         float sx = 0, sy = 0;
         for (int i = 0; i < sentences.Length; i++)
         {
@@ -63,13 +58,15 @@ public class PlayManager : MonoBehaviour
             sentenceText.transform.SetParent(MaskPanel.transform, false);
 
             TextMeshProUGUI textMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
-            textMeshProUGUI.text = sentences[i];
+            textMeshProUGUI.text = masks[i];
 
-            sx += textMeshProUGUI.preferredWidth + 5;
-            if (sx > rectTransform.rect.width) {
-                sx = 0;
+            sx += textMeshProUGUI.preferredWidth;
+            if (sx > maskPanelWidth) {
+                sx = textMeshProUGUI.preferredWidth + SpacePx;
                 sy -= 20;
-                sentenceText.transform.position = new Vector3(sx, sy, 0);
+                sentenceText.transform.localPosition = new Vector3(0, sy, 0);
+            } else {
+                sx += SpacePx;
             }
         }
 
