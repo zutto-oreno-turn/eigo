@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayManager : MonoBehaviour
 {
-    public GameObject AnswerText; // [todo] 削除する
+    public GameObject QuestionNumberText;
+    public GameObject DateText;
     public GameObject MaskPanel;
     public GameObject SentenceTextPrefab;
     public GameObject WordContent;
@@ -22,6 +23,7 @@ public class PlayManager : MonoBehaviour
     int CurrentQuestionNumber = 0;
     int ChoiceNumber = 2;
     int AnserNumber = 1;
+    string AnswerText = "";
 
     void Start()
     {
@@ -48,7 +50,13 @@ public class PlayManager : MonoBehaviour
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
         string[] shuffles = MakeShuffleSentences(sentences);
         string[] masks = MakeMaskedSentences(sentences, shuffles);
-        AnswerText.GetComponent<TextMeshProUGUI>().text = string.Join(" ", masks);
+        AnswerText = string.Join(" ", masks);
+
+        TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
+        questionNumberTextMeshProUGUI.text = $"Question {CurrentQuestionNumber + 1}";
+
+        TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
+        dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
 
         float maskPanelWidth = MaskPanel.GetComponent<RectTransform>().rect.width;
         float sx = 0, sy = 0;
@@ -57,12 +65,12 @@ public class PlayManager : MonoBehaviour
             GameObject sentenceText = Instantiate(SentenceTextPrefab, new Vector3(sx, sy, 0), Quaternion.identity);
             sentenceText.transform.SetParent(MaskPanel.transform, false);
 
-            TextMeshProUGUI textMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
-            textMeshProUGUI.text = masks[i];
+            TextMeshProUGUI sentenceTextMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
+            sentenceTextMeshProUGUI.text = masks[i];
 
-            sx += textMeshProUGUI.preferredWidth;
+            sx += sentenceTextMeshProUGUI.preferredWidth;
             if (sx > maskPanelWidth) {
-                sx = textMeshProUGUI.preferredWidth + SpacePx;
+                sx = sentenceTextMeshProUGUI.preferredWidth + SpacePx;
                 sy -= 20;
                 sentenceText.transform.localPosition = new Vector3(0, sy, 0);
             } else {
@@ -76,8 +84,8 @@ public class PlayManager : MonoBehaviour
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(ax, ay, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
-            TextMeshProUGUI wordButtonText = wordButton.GetComponentInChildren<TextMeshProUGUI>();
-            wordButtonText.text = shuffles[i];
+            TextMeshProUGUI wordButtonTextMeshProUGUI = wordButton.GetComponentInChildren<TextMeshProUGUI>();
+            wordButtonTextMeshProUGUI.text = shuffles[i];
 
             if (ax < -200)
             {
@@ -88,7 +96,7 @@ public class PlayManager : MonoBehaviour
                 ax = -350;
                 ay -= 70;
             }
-            wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonText.text));
+            wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonTextMeshProUGUI.text));
         }
     }
 
@@ -139,17 +147,15 @@ public class PlayManager : MonoBehaviour
     {
         Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
 
-        string text = AnswerText.GetComponent<TextMeshProUGUI>().text;
-
-        int maskLocation = text.IndexOf($"***({AnserNumber})***");
+        int maskLocation = AnswerText.IndexOf($"***({AnserNumber})***");
         int maskLength = maskLocation + word.Length + 1;
         int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
         if (maskLength > correctLength) {
             maskLength = correctLength;    
         }
 
-        string anser = text.Replace($"***({AnserNumber})***", word);
-        string anserPart = anser.Substring(0, maskLength);
+        AnswerText = AnswerText.Replace($"***({AnserNumber})***", word);
+        string anserPart = AnswerText.Substring(0, maskLength);
         string correctPart = Questions[CurrentQuestionNumber].sentence.Substring(0, maskLength);
 
         Debug.Log("anserPart: " + anserPart);
@@ -162,7 +168,6 @@ public class PlayManager : MonoBehaviour
         }
 
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
-        AnswerText.GetComponent<TextMeshProUGUI>().text = anser;
 
         if (AnserNumber < ChoiceNumber) {
             AnserNumber++;
@@ -178,7 +183,7 @@ public class PlayManager : MonoBehaviour
         {
             CurrentQuestionNumber++;
             AnserNumber = 1;
-            AnswerText.GetComponent<TextMeshProUGUI>().text = "";
+            AnswerText = "";
             DestroyWordButton();
             MakePlayScreen();
             return;
@@ -194,10 +199,13 @@ public class PlayManager : MonoBehaviour
 
     void DestroyWordButton()
     {
-        Debug.Log("PlayManager.cs#DestroyWordButton 1");
+        Debug.Log("PlayManager.cs#DestroyWordButton");
+        foreach (Transform children in MaskPanel.transform)
+        {
+            GameObject.Destroy(children.gameObject);
+        }
         foreach (Transform children in WordContent.transform)
         {
-            Debug.Log("PlayManager.cs#DestroyWordButton 2: " + children.gameObject.name);
             GameObject.Destroy(children.gameObject);
         }
     }
