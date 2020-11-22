@@ -13,6 +13,7 @@ public class PlayManager : MonoBehaviour
     public GameObject DateText;
     public GameObject MaskPanel;
     public GameObject SentenceTextPrefab;
+    public GameObject RateText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
 
@@ -20,14 +21,17 @@ public class PlayManager : MonoBehaviour
 
     Question[] Questions;
 
+    bool IsWrong;
     int CurrentQuestionNumber = 0;
     int ChoiceNumber = 2;
-    int AnserNumber = 1;
-    string AnswerText = "";
+    int AnswerNumber;
+    int TotalQuestionNumber = 0;
+    int TotalCorrectQuestionNumber = 0;
+    string AnswerText;
 
     void Start()
     {
-        Debug.Log("PlayManager.cs#Start: " + CategoryManager.SelectedCategoryName);
+        Debug.Log("PlayManager.cs#Start");
         StartCoroutine(GetQuestion());
     }
 
@@ -41,12 +45,32 @@ public class PlayManager : MonoBehaviour
 
         QuestionParser data = JsonUtility.FromJson<QuestionParser>(request.downloadHandler.text);
         Questions = data.questions;
-        MakePlayScreen();
+
+        MakePlayPanel();
     }
 
-    void MakePlayScreen()
+    void ClearPlayPanel()
     {
-        Debug.Log("PlayManager.cs#MakePlayScreen 1: " + Questions[CurrentQuestionNumber].sentence);
+        Debug.Log("PlayManager.cs#ClearPlayPanel");
+        TotalQuestionNumber++;
+        IsWrong = false;
+        AnswerText = "";
+        AnswerNumber = 1;
+        foreach (Transform children in MaskPanel.transform)
+        {
+            GameObject.Destroy(children.gameObject);
+        }
+        foreach (Transform children in WordContent.transform)
+        {
+            GameObject.Destroy(children.gameObject);
+        }
+    }
+
+    void MakePlayPanel()
+    {
+        Debug.Log("PlayManager.cs#MakePlayPanel");
+        ClearPlayPanel();
+
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
         string[] shuffles = MakeShuffleSentences(sentences);
         string[] masks = MakeMaskedSentences(sentences, shuffles);
@@ -98,6 +122,8 @@ public class PlayManager : MonoBehaviour
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonTextMeshProUGUI.text));
         }
+
+
     }
 
     string[] MakeShuffleSentences(string[] sentences)
@@ -117,7 +143,7 @@ public class PlayManager : MonoBehaviour
 
     string[] MakeMaskedSentences(string[] sentences, string[] shuffles)
     {
-        Debug.Log("PlayManager.cs#MakeMaskedSentences 1");
+        Debug.Log("PlayManager.cs#MakeMaskedSentences");
         string[] masks = new string[sentences.Length];
         Array.Copy(sentences, masks, sentences.Length);
         for (int i = 0; i < ChoiceNumber; i++)
@@ -146,15 +172,14 @@ public class PlayManager : MonoBehaviour
     void OnClickWordButton(string word)
     {
         Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
-
-        int maskLocation = AnswerText.IndexOf($"***({AnserNumber})***");
+        int maskLocation = AnswerText.IndexOf($"***({AnswerNumber})***");
         int maskLength = maskLocation + word.Length + 1;
         int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
         if (maskLength > correctLength) {
             maskLength = correctLength;    
         }
 
-        AnswerText = AnswerText.Replace($"***({AnserNumber})***", word);
+        AnswerText = AnswerText.Replace($"***({AnswerNumber})***", word);
         string anserPart = AnswerText.Substring(0, maskLength);
         string correctPart = Questions[CurrentQuestionNumber].sentence.Substring(0, maskLength);
 
@@ -164,49 +189,38 @@ public class PlayManager : MonoBehaviour
         if (anserPart != correctPart)
         {
             Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
+            IsWrong = true;
             return;
         }
 
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
 
-        if (AnserNumber < ChoiceNumber) {
-            AnserNumber++;
+        if (AnswerNumber < ChoiceNumber) {
+            AnswerNumber++;
             return;
         }
 
-        Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 1 : " + CurrentQuestionNumber);
-        Debug.Log("PlayManager.cs#OnClickWordButton Clear ! 2 : " + Questions.Length);
+        Debug.Log("PlayManager.cs#OnClickWordButton Clear !");
 
         // [todo] 正解したら正解文をみたいので、次の問題へボタンがほしい
+
+        if (IsWrong == false) {
+            TotalCorrectQuestionNumber++;
+        }
+
+        // [todo] 割合計算がうまくいかん
+        // decimal rate = ((decimal) TotalCorrectQuestionNumber / TotalQuestionNumber) * 100;
+        // TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
+        // rateTextMeshProUGUI.text = $"Rate: {rate}% ({TotalQuestionNumber}/{TotalCorrectQuestionNumber})";
 
         if (CurrentQuestionNumber < Questions.Length - 1)
         {
             CurrentQuestionNumber++;
-            AnserNumber = 1;
-            AnswerText = "";
-            DestroyWordButton();
-            MakePlayScreen();
+            MakePlayPanel();
             return;
         }
 
         Debug.Log("PlayManager.cs#OnClickWordButton All Clear !");
         SceneManager.LoadScene("Break");
-    }
-
-    bool IsCorrect(string word) {
-        return false;
-    }
-
-    void DestroyWordButton()
-    {
-        Debug.Log("PlayManager.cs#DestroyWordButton");
-        foreach (Transform children in MaskPanel.transform)
-        {
-            GameObject.Destroy(children.gameObject);
-        }
-        foreach (Transform children in WordContent.transform)
-        {
-            GameObject.Destroy(children.gameObject);
-        }
     }
 }
