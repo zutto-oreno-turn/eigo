@@ -17,6 +17,8 @@ public class PlayManager : MonoBehaviour
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
 
+    public Material MaskMaterial;
+
     const int SpacePx = 5;
 
     Question[] Questions;
@@ -31,13 +33,11 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("PlayManager.cs#Start");
         StartCoroutine(GetQuestion());
     }
 
     IEnumerator GetQuestion()
     {
-        Debug.Log("PlayManager.cs#GetQuestion");
         string url = $"https://www.zutto-oreno-turn.com/cdn/eigo/question/category/tweet/CNN.json";
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Content-Type", "application/json");
@@ -51,7 +51,6 @@ public class PlayManager : MonoBehaviour
 
     void ClearPlayPanel()
     {
-        Debug.Log("PlayManager.cs#ClearPlayPanel");
         IsWrong = false;
         AnswerText = "";
         AnswerNumber = 1;
@@ -67,7 +66,6 @@ public class PlayManager : MonoBehaviour
 
     void MakePlayPanel()
     {
-        Debug.Log("PlayManager.cs#MakePlayPanel");
         ClearPlayPanel();
 
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
@@ -99,6 +97,25 @@ public class PlayManager : MonoBehaviour
             } else {
                 sx += SpacePx;
             }
+
+            if (masks[i].IndexOf($"***") > -1) {
+                Debug.Log("Mask: " + masks[i]);
+
+                // TextMeshPro textMeshPro = sentenceText.GetComponent<TextMeshPro>();
+                // GameObject background = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                // background.name = "background";
+                // background.transform.Rotate(-90, 0, 0);
+                // background.transform.SetParent(sentenceText.transform);
+                // background.GetComponent<MeshRenderer>().material = MaskMaterial;
+
+                // var bounds = sentenceTextMeshProUGUI.bounds;
+                // var pos = bounds.center;
+                // var hoseiZ = 0.01f;
+                // background.transform.localPosition = new Vector3(pos.x, pos.y, pos.z + hoseiZ);
+
+                // var scale = bounds.extents;
+                // background.transform.localScale = new Vector3((scale.x / 10 * 2), 1, (scale.y / 10 * 2));
+            }
         }
 
         float ax = -350, ay = 60;
@@ -125,7 +142,6 @@ public class PlayManager : MonoBehaviour
 
     string[] MakeShuffleSentences(string[] sentences)
     {
-        Debug.Log("PlayManager.cs#MakeShuffleSentences");
         string[] shuffles = new string[sentences.Length];
         Array.Copy(sentences, shuffles, sentences.Length);
         for (int i = 0; i < shuffles.Length; i++)
@@ -140,7 +156,6 @@ public class PlayManager : MonoBehaviour
 
     string[] MakeMaskedSentences(string[] sentences, string[] shuffles)
     {
-        Debug.Log("PlayManager.cs#MakeMaskedSentences");
         string[] masks = new string[sentences.Length];
         Array.Copy(sentences, masks, sentences.Length);
         for (int i = 0; i < ChoiceNumber; i++)
@@ -168,7 +183,6 @@ public class PlayManager : MonoBehaviour
 
     void OnClickWordButton(string word)
     {
-        Debug.Log("PlayManager.cs#OnClickWordButton: " + word);
         int maskLocation = AnswerText.IndexOf($"***({AnswerNumber})***");
         int maskLength = maskLocation + word.Length + 1;
         int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
@@ -176,12 +190,12 @@ public class PlayManager : MonoBehaviour
             maskLength = correctLength;    
         }
 
-        AnswerText = AnswerText.Replace($"***({AnswerNumber})***", word);
-        string anserPart = AnswerText.Substring(0, maskLength);
+        string answer = AnswerText.Replace($"***({AnswerNumber})***", word);
+        string anserPart = answer.Substring(0, maskLength);
         string correctPart = Questions[CurrentQuestionNumber].sentence.Substring(0, maskLength);
 
-        Debug.Log("anserPart: " + anserPart);
-        Debug.Log("correctPart: " + correctPart);
+        Debug.Log("Part1: " + anserPart);
+        Debug.Log("Part2: " + correctPart);
 
         if (anserPart != correctPart)
         {
@@ -189,17 +203,15 @@ public class PlayManager : MonoBehaviour
             IsWrong = true;
             return;
         }
-
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
+        AnswerText = answer;
 
         if (AnswerNumber < ChoiceNumber) {
             AnswerNumber++;
             return;
         }
 
-        Debug.Log("PlayManager.cs#OnClickWordButton Clear !");
-
-        // [todo] 正解したら正解文をみたいので、次の問題へボタンがほしい
+        // [todo] 正解文を表示してから次の問題に行く
 
         TotalQuestionNumber++;
         if (IsWrong == false) {
@@ -216,7 +228,7 @@ public class PlayManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("PlayManager.cs#OnClickWordButton All Clear !");
+        // [todo] ある程度クリアしたら休憩のための広告表示ページを表示する
         SceneManager.LoadScene("Break");
     }
 }
