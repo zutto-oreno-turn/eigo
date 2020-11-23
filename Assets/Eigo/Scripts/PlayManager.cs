@@ -52,7 +52,6 @@ public class PlayManager : MonoBehaviour
     void ClearPlayPanel()
     {
         Debug.Log("PlayManager.cs#ClearPlayPanel");
-        TotalQuestionNumber++;
         IsWrong = false;
         AnswerText = "";
         AnswerNumber = 1;
@@ -122,8 +121,6 @@ public class PlayManager : MonoBehaviour
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonTextMeshProUGUI.text));
         }
-
-
     }
 
     string[] MakeShuffleSentences(string[] sentences)
@@ -204,14 +201,13 @@ public class PlayManager : MonoBehaviour
 
         // [todo] 正解したら正解文をみたいので、次の問題へボタンがほしい
 
+        TotalQuestionNumber++;
         if (IsWrong == false) {
             TotalCorrectQuestionNumber++;
         }
-
-        // [todo] 割合計算がうまくいかん
-        // decimal rate = ((decimal) TotalCorrectQuestionNumber / TotalQuestionNumber) * 100;
-        // TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
-        // rateTextMeshProUGUI.text = $"Rate: {rate}% ({TotalQuestionNumber}/{TotalCorrectQuestionNumber})";
+        string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
+        TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
+        rateTextMeshProUGUI.text = $"Rate: {rate} ({TotalQuestionNumber}/{TotalCorrectQuestionNumber})";
 
         if (CurrentQuestionNumber < Questions.Length - 1)
         {
