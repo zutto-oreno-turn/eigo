@@ -13,6 +13,7 @@ public class PlayManager : MonoBehaviour
     public GameObject DateText;
     public GameObject MaskPanel;
     public GameObject SentenceTextPrefab;
+    public GameObject MaskedImagePrefab;
     public GameObject RateText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
@@ -90,16 +91,37 @@ public class PlayManager : MonoBehaviour
             sentenceTextMeshProUGUI.text = masks[i];
 
             sx += sentenceTextMeshProUGUI.preferredWidth;
-            if (sx > maskPanelWidth) {
+            if (sx > maskPanelWidth)
+            {
                 sx = sentenceTextMeshProUGUI.preferredWidth + SpacePx;
                 sy -= 20;
                 sentenceText.transform.localPosition = new Vector3(0, sy, 0);
-            } else {
+            }
+            else
+            {
                 sx += SpacePx;
             }
 
-            if (masks[i].IndexOf($"***") > -1) {
-                Debug.Log("Mask: " + masks[i]);
+            if (masks[i].IndexOf($"***") > -1)
+            {
+                var t = sentenceText.GetComponent<TextMeshProUGUI>();
+                Debug.Log("Mask0: " + t.rectTransform.rect);
+                // float height = t.sizeDelta.y;
+                // Debug.Log($"width: {width}, height: {height}");
+
+
+                // TextMeshPro sentenceTextMeshPro = sentenceText.GetComponentInChildren<TextMeshPro>();
+
+                // Debug.Log("Mask1a: " + $"{sentenceTextMeshPro}"); // Mask1a: Center: (0.0, 0.0, 0.0), Extents: (0.0, 0.0, 0.0)
+                // Debug.Log("Mask1b: " + $"{sentenceText.transform.localPosition}"); // Mask1b: (171.5, -80.0, 0.0)
+                // Debug.Log("Mask1c: " + $"{sentenceText.transform.localScale}"); // Mask1c: (1.0, 1.0, 1.0)
+
+                // GameObject maskedImage = Instantiate(MaskedImagePrefab, new Vector3(sx, sy, 0), Quaternion.identity);
+                // maskedImage.transform.SetParent(MaskPanel.transform, false);
+                // var a = maskedImage.GetComponent<Image>();
+
+                // TextMeshProUGUI maskedImageTextMeshProUGUI = maskedImage.GetComponentInChildren<TextMeshProUGUI>();
+                // maskedImageTextMeshProUGUI.preferredWidth = sentenceTextMeshProUGUI.preferredWidth;
 
                 // TextMeshPro textMeshPro = sentenceText.GetComponent<TextMeshPro>();
                 // GameObject background = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -186,8 +208,9 @@ public class PlayManager : MonoBehaviour
         int maskLocation = AnswerText.IndexOf($"***({AnswerNumber})***");
         int maskLength = maskLocation + word.Length + 1;
         int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
-        if (maskLength > correctLength) {
-            maskLength = correctLength;    
+        if (maskLength > correctLength)
+        {
+            maskLength = correctLength;
         }
 
         string answer = AnswerText.Replace($"***({AnswerNumber})***", word);
@@ -206,7 +229,8 @@ public class PlayManager : MonoBehaviour
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
         AnswerText = answer;
 
-        if (AnswerNumber < ChoiceNumber) {
+        if (AnswerNumber < ChoiceNumber)
+        {
             AnswerNumber++;
             return;
         }
@@ -214,7 +238,8 @@ public class PlayManager : MonoBehaviour
         // [todo] 正解文を表示してから次の問題に行く
 
         TotalQuestionNumber++;
-        if (IsWrong == false) {
+        if (IsWrong == false)
+        {
             TotalCorrectQuestionNumber++;
         }
         string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
