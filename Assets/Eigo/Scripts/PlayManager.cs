@@ -13,6 +13,7 @@ public class PlayManager : MonoBehaviour
     public GameObject DateText;
     public GameObject MaskPanel;
     public GameObject SentenceTextPrefab;
+    public GameObject MaskedImagePrefab;
     public GameObject RateText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
@@ -90,31 +91,33 @@ public class PlayManager : MonoBehaviour
             sentenceTextMeshProUGUI.text = masks[i];
 
             sx += sentenceTextMeshProUGUI.preferredWidth;
-            if (sx > maskPanelWidth) {
+            if (sx > maskPanelWidth)
+            {
                 sx = sentenceTextMeshProUGUI.preferredWidth + SpacePx;
                 sy -= 20;
                 sentenceText.transform.localPosition = new Vector3(0, sy, 0);
-            } else {
+            }
+            else
+            {
                 sx += SpacePx;
             }
 
-            if (masks[i].IndexOf($"***") > -1) {
-                Debug.Log("Mask: " + masks[i]);
+            // [todo] マスク状態のものかどうかの判定をGameObject.nameで判定しよう
+            if (masks[i].IndexOf($"***") > -1)
+            {
+                RectTransform sentenceTextRectTransform = sentenceText.GetComponent<RectTransform>();
 
-                // TextMeshPro textMeshPro = sentenceText.GetComponent<TextMeshPro>();
-                // GameObject background = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                // background.name = "background";
-                // background.transform.Rotate(-90, 0, 0);
-                // background.transform.SetParent(sentenceText.transform);
-                // background.GetComponent<MeshRenderer>().material = MaskMaterial;
+                Vector3 position = new Vector3(sentenceTextRectTransform.localPosition.x, sentenceTextRectTransform.localPosition.y, 0);
+                GameObject maskedImage = Instantiate(MaskedImagePrefab, position, Quaternion.identity);
+                maskedImage.transform.SetParent(MaskPanel.transform, false);
 
-                // var bounds = sentenceTextMeshProUGUI.bounds;
-                // var pos = bounds.center;
-                // var hoseiZ = 0.01f;
-                // background.transform.localPosition = new Vector3(pos.x, pos.y, pos.z + hoseiZ);
+                RectTransform maskedImageRectTransform = maskedImage.GetComponent<RectTransform>();
+                maskedImageRectTransform.sizeDelta = new Vector2(
+                    sentenceTextMeshProUGUI.preferredWidth,
+                    sentenceTextMeshProUGUI.preferredHeight
+                );
 
-                // var scale = bounds.extents;
-                // background.transform.localScale = new Vector3((scale.x / 10 * 2), 1, (scale.y / 10 * 2));
+                sentenceTextMeshProUGUI.color = new Color32(255, 255, 255, 255);
             }
         }
 
@@ -186,8 +189,9 @@ public class PlayManager : MonoBehaviour
         int maskLocation = AnswerText.IndexOf($"***({AnswerNumber})***");
         int maskLength = maskLocation + word.Length + 1;
         int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
-        if (maskLength > correctLength) {
-            maskLength = correctLength;    
+        if (maskLength > correctLength)
+        {
+            maskLength = correctLength;
         }
 
         string answer = AnswerText.Replace($"***({AnswerNumber})***", word);
@@ -206,7 +210,8 @@ public class PlayManager : MonoBehaviour
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
         AnswerText = answer;
 
-        if (AnswerNumber < ChoiceNumber) {
+        if (AnswerNumber < ChoiceNumber)
+        {
             AnswerNumber++;
             return;
         }
@@ -214,7 +219,8 @@ public class PlayManager : MonoBehaviour
         // [todo] 正解文を表示してから次の問題に行く
 
         TotalQuestionNumber++;
-        if (IsWrong == false) {
+        if (IsWrong == false)
+        {
             TotalCorrectQuestionNumber++;
         }
         string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
