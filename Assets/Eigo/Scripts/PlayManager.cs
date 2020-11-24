@@ -102,41 +102,22 @@ public class PlayManager : MonoBehaviour
                 sx += SpacePx;
             }
 
+            // [todo] マスク状態のものかどうかの判定をGameObject.nameで判定しよう
             if (masks[i].IndexOf($"***") > -1)
             {
-                var t = sentenceText.GetComponent<TextMeshProUGUI>();
-                Debug.Log("Mask0: " + t.rectTransform.rect);
-                // float height = t.sizeDelta.y;
-                // Debug.Log($"width: {width}, height: {height}");
+                RectTransform sentenceTextRectTransform = sentenceText.GetComponent<RectTransform>();
 
+                Vector3 position = new Vector3(sentenceTextRectTransform.localPosition.x, sentenceTextRectTransform.localPosition.y, 0);
+                GameObject maskedImage = Instantiate(MaskedImagePrefab, position, Quaternion.identity);
+                maskedImage.transform.SetParent(MaskPanel.transform, false);
 
-                // TextMeshPro sentenceTextMeshPro = sentenceText.GetComponentInChildren<TextMeshPro>();
+                RectTransform maskedImageRectTransform = maskedImage.GetComponent<RectTransform>();
+                maskedImageRectTransform.sizeDelta = new Vector2(
+                    sentenceTextMeshProUGUI.preferredWidth,
+                    sentenceTextMeshProUGUI.preferredHeight
+                );
 
-                // Debug.Log("Mask1a: " + $"{sentenceTextMeshPro}"); // Mask1a: Center: (0.0, 0.0, 0.0), Extents: (0.0, 0.0, 0.0)
-                // Debug.Log("Mask1b: " + $"{sentenceText.transform.localPosition}"); // Mask1b: (171.5, -80.0, 0.0)
-                // Debug.Log("Mask1c: " + $"{sentenceText.transform.localScale}"); // Mask1c: (1.0, 1.0, 1.0)
-
-                // GameObject maskedImage = Instantiate(MaskedImagePrefab, new Vector3(sx, sy, 0), Quaternion.identity);
-                // maskedImage.transform.SetParent(MaskPanel.transform, false);
-                // var a = maskedImage.GetComponent<Image>();
-
-                // TextMeshProUGUI maskedImageTextMeshProUGUI = maskedImage.GetComponentInChildren<TextMeshProUGUI>();
-                // maskedImageTextMeshProUGUI.preferredWidth = sentenceTextMeshProUGUI.preferredWidth;
-
-                // TextMeshPro textMeshPro = sentenceText.GetComponent<TextMeshPro>();
-                // GameObject background = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                // background.name = "background";
-                // background.transform.Rotate(-90, 0, 0);
-                // background.transform.SetParent(sentenceText.transform);
-                // background.GetComponent<MeshRenderer>().material = MaskMaterial;
-
-                // var bounds = sentenceTextMeshProUGUI.bounds;
-                // var pos = bounds.center;
-                // var hoseiZ = 0.01f;
-                // background.transform.localPosition = new Vector3(pos.x, pos.y, pos.z + hoseiZ);
-
-                // var scale = bounds.extents;
-                // background.transform.localScale = new Vector3((scale.x / 10 * 2), 1, (scale.y / 10 * 2));
+                sentenceTextMeshProUGUI.color = new Color32(255, 255, 255, 255);
             }
         }
 
