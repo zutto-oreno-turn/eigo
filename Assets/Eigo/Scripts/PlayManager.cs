@@ -11,14 +11,12 @@ public class PlayManager : MonoBehaviour
 {
     public GameObject QuestionNumberText;
     public GameObject DateText;
-    public GameObject MaskPanel;
+    public GameObject SentencePanel;
     public GameObject SentenceTextPrefab;
-    public GameObject MaskedImagePrefab;
+    public GameObject MaskPanelPrefab;
     public GameObject RateText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
-
-    public Material MaskMaterial;
 
     const int SpacePx = 5;
 
@@ -26,11 +24,10 @@ public class PlayManager : MonoBehaviour
 
     bool IsWrong;
     int CurrentQuestionNumber = 0;
-    int ChoiceNumber = 2;
+    int ChoiceNumber = 3;
     int AnswerNumber;
     int TotalQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
-    string AnswerText;
 
     void Start()
     {
@@ -53,9 +50,8 @@ public class PlayManager : MonoBehaviour
     void ClearPlayPanel()
     {
         IsWrong = false;
-        AnswerText = "";
         AnswerNumber = 1;
-        foreach (Transform children in MaskPanel.transform)
+        foreach (Transform children in SentencePanel.transform)
         {
             GameObject.Destroy(children.gameObject);
         }
@@ -72,7 +68,6 @@ public class PlayManager : MonoBehaviour
         string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
         string[] shuffles = MakeShuffleSentences(sentences);
         string[] masks = MakeMaskedSentences(sentences, shuffles);
-        AnswerText = string.Join(" ", masks);
 
         TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
         questionNumberTextMeshProUGUI.text = $"Question {CurrentQuestionNumber + 1}";
@@ -80,15 +75,16 @@ public class PlayManager : MonoBehaviour
         TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
         dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
 
-        float maskPanelWidth = MaskPanel.GetComponent<RectTransform>().rect.width;
+        float maskPanelWidth = SentencePanel.GetComponent<RectTransform>().rect.width;
         float sx = 0, sy = 0;
+        int count = 1;
         for (int i = 0; i < sentences.Length; i++)
         {
             GameObject sentenceText = Instantiate(SentenceTextPrefab, new Vector3(sx, sy, 0), Quaternion.identity);
-            sentenceText.transform.SetParent(MaskPanel.transform, false);
+            sentenceText.transform.SetParent(SentencePanel.transform, false);
 
             TextMeshProUGUI sentenceTextMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
-            sentenceTextMeshProUGUI.text = masks[i];
+            sentenceTextMeshProUGUI.text = sentences[i];
 
             sx += sentenceTextMeshProUGUI.preferredWidth;
             if (sx > maskPanelWidth)
@@ -102,22 +98,27 @@ public class PlayManager : MonoBehaviour
                 sx += SpacePx;
             }
 
-            // [todo] マスク状態のものかどうかの判定をGameObject.nameで判定しよう
-            if (masks[i].IndexOf($"***") > -1)
+            if (masks[i] == "*****")
             {
+                sentenceText.name = $"SentenceText_{count}";
+
                 RectTransform sentenceTextRectTransform = sentenceText.GetComponent<RectTransform>();
+                Vector3 sentenceTextPosition = new Vector3(sentenceTextRectTransform.localPosition.x, sentenceTextRectTransform.localPosition.y, 0);
 
-                Vector3 position = new Vector3(sentenceTextRectTransform.localPosition.x, sentenceTextRectTransform.localPosition.y, 0);
-                GameObject maskedImage = Instantiate(MaskedImagePrefab, position, Quaternion.identity);
-                maskedImage.transform.SetParent(MaskPanel.transform, false);
+                GameObject maskPanel = Instantiate(MaskPanelPrefab, sentenceTextPosition, Quaternion.identity);
+                maskPanel.transform.SetParent(SentencePanel.transform, false);
+                maskPanel.name = $"MaskPanel_{count}";
 
-                RectTransform maskedImageRectTransform = maskedImage.GetComponent<RectTransform>();
-                maskedImageRectTransform.sizeDelta = new Vector2(
+                RectTransform maskPanelRectTransform = maskPanel.GetComponent<RectTransform>();
+                maskPanelRectTransform.sizeDelta = new Vector2(
                     sentenceTextMeshProUGUI.preferredWidth,
                     sentenceTextMeshProUGUI.preferredHeight
                 );
 
-                sentenceTextMeshProUGUI.color = new Color32(255, 255, 255, 255);
+                GameObject maskText = maskPanel.transform.Find("MaskText").gameObject;
+                TextMeshProUGUI maskTextMeshProUGUI = maskText.GetComponentInChildren<TextMeshProUGUI>();
+                maskTextMeshProUGUI.text = $"{count}";;
+                count++;
             }
         }
 
@@ -172,43 +173,21 @@ public class PlayManager : MonoBehaviour
                 }
             }
         }
-        int count = 1;
-        for (int i = 0; i < masks.Length; i++)
-        {
-            if (masks[i] == "*****")
-            {
-                masks[i] = $"***({count})***";
-                count++;
-            }
-        }
         return masks;
     }
 
     void OnClickWordButton(string word)
     {
-        int maskLocation = AnswerText.IndexOf($"***({AnswerNumber})***");
-        int maskLength = maskLocation + word.Length + 1;
-        int correctLength = Questions[CurrentQuestionNumber].sentence.Length;
-        if (maskLength > correctLength)
-        {
-            maskLength = correctLength;
-        }
+        GameObject sentenceText = SentencePanel.transform.Find($"SentenceText_{AnswerNumber}").gameObject;
+        TextMeshProUGUI sentenceTextMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
 
-        string answer = AnswerText.Replace($"***({AnswerNumber})***", word);
-        string anserPart = answer.Substring(0, maskLength);
-        string correctPart = Questions[CurrentQuestionNumber].sentence.Substring(0, maskLength);
-
-        Debug.Log("Part1: " + anserPart);
-        Debug.Log("Part2: " + correctPart);
-
-        if (anserPart != correctPart)
+        if (word != sentenceTextMeshProUGUI.text)
         {
             Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
             IsWrong = true;
             return;
         }
         Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
-        AnswerText = answer;
 
         if (AnswerNumber < ChoiceNumber)
         {
