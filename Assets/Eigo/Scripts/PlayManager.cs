@@ -19,6 +19,7 @@ public class PlayManager : MonoBehaviour
     public GameObject WordButtonPrefab;
 
     const int SpacePx = 5;
+    const string MaskString = "*******";
 
     Question[] Questions;
 
@@ -28,6 +29,8 @@ public class PlayManager : MonoBehaviour
     int AnswerNumber;
     int TotalQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
+
+    string[] CorrectArray;
 
     void Start()
     {
@@ -51,6 +54,8 @@ public class PlayManager : MonoBehaviour
     {
         IsWrong = false;
         AnswerNumber = 1;
+        Array.Resize(ref CorrectArray, ChoiceNumber);
+
         foreach (Transform children in SentencePanel.transform)
         {
             GameObject.Destroy(children.gameObject);
@@ -65,26 +70,35 @@ public class PlayManager : MonoBehaviour
     {
         ClearPlayPanel();
 
-        string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
-        string[] shuffles = MakeShuffleSentences(sentences);
-        string[] masks = MakeMaskedSentences(sentences, shuffles);
-
         TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
         questionNumberTextMeshProUGUI.text = $"Question {CurrentQuestionNumber + 1}";
 
         TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
         dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
 
+        string[] sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
+        string[] shuffles = MakeShuffleSentences(sentences);
+        string[] masks = MakeMaskedSentences(sentences, shuffles);
+
         float maskPanelWidth = SentencePanel.GetComponent<RectTransform>().rect.width;
         float sx = 0, sy = 0;
-        int count = 1;
+        int maskNumber = 1;
         for (int i = 0; i < sentences.Length; i++)
         {
+            bool isFixed = masks[i] == MaskString && maskNumber >= AnswerNumber;
+
             GameObject sentenceText = Instantiate(SentenceTextPrefab, new Vector3(sx, sy, 0), Quaternion.identity);
             sentenceText.transform.SetParent(SentencePanel.transform, false);
 
             TextMeshProUGUI sentenceTextMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
-            sentenceTextMeshProUGUI.text = sentences[i];
+
+            if (isFixed)
+            {
+                CorrectArray[maskNumber - 1] = sentences[i];
+                sentenceTextMeshProUGUI.text = MaskString;
+            } else {
+                sentenceTextMeshProUGUI.text = sentences[i];
+            }
 
             sx += sentenceTextMeshProUGUI.preferredWidth;
             if (sx > maskPanelWidth)
@@ -98,16 +112,13 @@ public class PlayManager : MonoBehaviour
                 sx += SpacePx;
             }
 
-            if (masks[i] == "*****")
+            if (isFixed)
             {
-                sentenceText.name = $"SentenceText_{count}";
-
                 RectTransform sentenceTextRectTransform = sentenceText.GetComponent<RectTransform>();
                 Vector3 sentenceTextPosition = new Vector3(sentenceTextRectTransform.localPosition.x, sentenceTextRectTransform.localPosition.y, 0);
 
                 GameObject maskPanel = Instantiate(MaskPanelPrefab, sentenceTextPosition, Quaternion.identity);
                 maskPanel.transform.SetParent(SentencePanel.transform, false);
-                maskPanel.name = $"MaskPanel_{count}";
 
                 RectTransform maskPanelRectTransform = maskPanel.GetComponent<RectTransform>();
                 maskPanelRectTransform.sizeDelta = new Vector2(
@@ -117,8 +128,8 @@ public class PlayManager : MonoBehaviour
 
                 GameObject maskText = maskPanel.transform.Find("MaskText").gameObject;
                 TextMeshProUGUI maskTextMeshProUGUI = maskText.GetComponentInChildren<TextMeshProUGUI>();
-                maskTextMeshProUGUI.text = $"{count}";;
-                count++;
+                maskTextMeshProUGUI.text = $"{maskNumber}"; ;
+                maskNumber++;
             }
         }
 
@@ -168,7 +179,7 @@ public class PlayManager : MonoBehaviour
             {
                 if (masks[j] == shuffles[i])
                 {
-                    masks[j] = "*****";
+                    masks[j] = MaskString;
                     break;
                 }
             }
@@ -178,10 +189,7 @@ public class PlayManager : MonoBehaviour
 
     void OnClickWordButton(string word)
     {
-        GameObject sentenceText = SentencePanel.transform.Find($"SentenceText_{AnswerNumber}").gameObject;
-        TextMeshProUGUI sentenceTextMeshProUGUI = sentenceText.GetComponentInChildren<TextMeshProUGUI>();
-
-        if (word != sentenceTextMeshProUGUI.text)
+        if (word != CorrectArray[AnswerNumber - 1])
         {
             Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
             IsWrong = true;
@@ -192,6 +200,7 @@ public class PlayManager : MonoBehaviour
         if (AnswerNumber < ChoiceNumber)
         {
             AnswerNumber++;
+            // [todo] マスクを取って画面再表示する
             return;
         }
 
@@ -204,7 +213,7 @@ public class PlayManager : MonoBehaviour
         }
         string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
         TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
-        rateTextMeshProUGUI.text = $"Rate: {rate} ({TotalQuestionNumber}/{TotalCorrectQuestionNumber})";
+        rateTextMeshProUGUI.text = $"Rate: {rate} ({TotalCorrectQuestionNumber}/{TotalQuestionNumber})";
 
         if (CurrentQuestionNumber < Questions.Length - 1)
         {
