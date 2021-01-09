@@ -23,17 +23,17 @@ public class PlayManager : MonoBehaviour
 
     Question[] Questions;
 
-    bool IsWrong;
+    bool IsCorrect;
     int CurrentQuestionNumber = 0;
     int ChoiceNumber = 3;
     int AnswerNumber;
     int TotalQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
 
-    string[] CorrectArray;
     string[] Sentences;
     string[] Shuffles;
     string[] Masks;
+    string[] CorrectArray;
 
     void Start()
     {
@@ -55,13 +55,14 @@ public class PlayManager : MonoBehaviour
 
     void MakePlayPanel()
     {
-        IsWrong = false;
+        IsCorrect = true;
         AnswerNumber = 1;
         Array.Resize(ref CorrectArray, ChoiceNumber);
 
         Sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
         MakeShuffleSentences();
         MakeMaskedSentences();
+        MakeCorrectArray();
 
         TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
         questionNumberTextMeshProUGUI.text = $"Question {CurrentQuestionNumber + 1}";
@@ -103,6 +104,19 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    void MakeCorrectArray()
+    {
+        int maskNumber = 0;
+        for (int i = 0; i < Masks.Length; i++)
+        {
+            if (Masks[i] == MaskString)
+            {
+                CorrectArray[maskNumber] = Sentences[i];
+                maskNumber++;
+            }
+        }
+    }
+
     void MakeSentencePanel()
     {
         foreach (Transform children in SentencePanel.transform)
@@ -126,7 +140,6 @@ public class PlayManager : MonoBehaviour
             if (isFixed)
             {
                 sentenceTextMeshProUGUI.text = MaskString;
-                CorrectArray[maskNumber - 1] = Sentences[i]; // [todo] 毎回ここ呼ぶのはちょっと無駄。やっぱデータは最初に一回だけ全部作っておく形にしないとな。
             }
             else
             {
@@ -205,10 +218,13 @@ public class PlayManager : MonoBehaviour
         if (word != CorrectArray[AnswerNumber - 1])
         {
             Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
-            IsWrong = true;
+            IsCorrect = false;
             return;
         }
-        Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
+        else
+        {
+            Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
+        }
 
         if (AnswerNumber < ChoiceNumber)
         {
@@ -219,11 +235,12 @@ public class PlayManager : MonoBehaviour
 
         // [todo] 正解文を表示してから次の問題に行く
 
-        TotalQuestionNumber++;
-        if (IsWrong == false)
+        if (IsCorrect)
         {
             TotalCorrectQuestionNumber++;
         }
+        TotalQuestionNumber++;
+
         string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
         TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
         rateTextMeshProUGUI.text = $"Rate: {rate} ({TotalCorrectQuestionNumber}/{TotalQuestionNumber})";
