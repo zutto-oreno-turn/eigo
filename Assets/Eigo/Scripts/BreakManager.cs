@@ -8,9 +8,9 @@ public class BreakManager : MonoBehaviour
         Debug.Log("BreakManager.cs#Start");
     }
 
-    public void OnClickReturnButton()
+    public void OnClickNextButton()
     {
-        Debug.Log("BreakManager.cs#OnClickReturnButton");
-        SceneManager.LoadScene("Title");
+        Debug.Log("BreakManager.cs#OnClickNextButton");
+        SceneManager.LoadScene("Play");
     }
 }

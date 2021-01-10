@@ -17,6 +17,7 @@ public class PlayManager : MonoBehaviour
     public GameObject RateText;
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
+    public GameObject NextPanel;
 
     const int SpacePx = 5;
     const string MaskString = "*******";
@@ -37,6 +38,7 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
+        // Scene Initialize
         LoadData();
         StartCoroutine(GetQuestion());
     }
@@ -56,7 +58,7 @@ public class PlayManager : MonoBehaviour
 
     void LoadData()
     {
-        // PlayerPrefs.DeleteAll(); [memo] Debug Code
+        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -71,7 +73,7 @@ public class PlayManager : MonoBehaviour
 
     void MakePlayPanel()
     {
-        // Initialize
+        // Question Initialize
         IsCorrect = true;
         AnswerNumber = 1;
         Array.Resize(ref Correct, ChoiceNumber);
@@ -87,6 +89,7 @@ public class PlayManager : MonoBehaviour
         MakeSentencePanel();
         MakeRate();
         MakeWordContent();
+        MakeNextPanel();
     }
 
     void MakeShuffleSentencesArray()
@@ -250,6 +253,12 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    void MakeNextPanel() {
+        NextPanel.SetActive(false);
+        GameObject nextButton = NextPanel.transform.Find("NextButton").gameObject;
+        nextButton.GetComponent<Button>().onClick.AddListener(() => OnClickNextButton());
+    }
+
     void OnClickWordButton(string word)
     {
         if (word != Correct[AnswerNumber - 1])
@@ -263,10 +272,11 @@ public class PlayManager : MonoBehaviour
             Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
         }
 
-        if (AnswerNumber < ChoiceNumber)
+        AnswerNumber++;
+        MakeSentencePanel();
+
+        if (AnswerNumber <= ChoiceNumber)
         {
-            AnswerNumber++;
-            MakeSentencePanel();
             return;
         }
 
@@ -274,16 +284,30 @@ public class PlayManager : MonoBehaviour
         {
             TotalCorrectQuestionNumber++;
         }
+
         TotalaAlreadyQuestionNumber++;
         CurrentQuestionNumber++;
         SaveData();
+        MakeRate();
 
-        if (CurrentQuestionNumber < Questions.Length)
+        NextPanel.SetActive(true);
+    }
+
+    public void OnClickNextButton()
+    {
+        // if (CurrentQuestionNumber < Questions.Length)
+        // {
+        //     MakePlayPanel();
+        //     return;
+        // } else {
+        //     SceneManager.LoadScene("Break");
+        // }
+        if (CurrentQuestionNumber < 2)
         {
             MakePlayPanel();
             return;
+        } else {
+            SceneManager.LoadScene("Break");
         }
-
-        SceneManager.LoadScene("Break");
     }
 }
