@@ -53,6 +53,10 @@ public class PlayManager : MonoBehaviour
         MakePlayPanel();
     }
 
+    void LoadData() {
+
+    }
+
     void MakePlayPanel()
     {
         IsCorrect = true;
@@ -65,7 +69,7 @@ public class PlayManager : MonoBehaviour
         MakeCorrectArray();
 
         TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
-        questionNumberTextMeshProUGUI.text = $"Question {CurrentQuestionNumber + 1}";
+        questionNumberTextMeshProUGUI.text = $"Question {String.Format("{0:#,0}", CurrentQuestionNumber + 1)}";
 
         TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
         dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
@@ -242,8 +246,11 @@ public class PlayManager : MonoBehaviour
         TotalQuestionNumber++;
 
         string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
+        string correct = String.Format("{0:#,0}", TotalCorrectQuestionNumber);
+        string total = String.Format("{0:#,0}", TotalQuestionNumber);
+
         TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
-        rateTextMeshProUGUI.text = $"Rate: {rate} ({TotalCorrectQuestionNumber}/{TotalQuestionNumber})";
+        rateTextMeshProUGUI.text = $"Rate: {rate} ({correct}/{total})";
 
         if (CurrentQuestionNumber < Questions.Length - 1)
         {
