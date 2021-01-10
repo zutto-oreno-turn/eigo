@@ -23,20 +23,21 @@ public class PlayManager : MonoBehaviour
 
     Question[] Questions;
 
-    bool IsCorrect;
+    bool IsCorrect = true;
     int CurrentQuestionNumber = 0;
-    int ChoiceNumber = 3;
-    int AnswerNumber;
-    int TotalQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
+    int TotalaAlreadyQuestionNumber = 0;
+    int ChoiceNumber = 3;
+    int AnswerNumber = 1;
 
     string[] Sentences;
     string[] Shuffles;
     string[] Masks;
-    string[] CorrectArray;
+    string[] Correct;
 
     void Start()
     {
+        LoadData();
         StartCoroutine(GetQuestion());
     }
 
@@ -53,32 +54,42 @@ public class PlayManager : MonoBehaviour
         MakePlayPanel();
     }
 
-    void LoadData() {
+    void LoadData()
+    {
+        // PlayerPrefs.DeleteAll(); [memo] Debug Code
+        CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
+        TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
+        TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
+    }
 
+    void SaveData()
+    {
+        PlayerPrefs.SetInt("CurrentQuestionNumber", CurrentQuestionNumber);
+        PlayerPrefs.SetInt("TotalCorrectQuestionNumber", TotalCorrectQuestionNumber);
+        PlayerPrefs.SetInt("TotalaAlreadyQuestionNumber", TotalaAlreadyQuestionNumber);
     }
 
     void MakePlayPanel()
     {
+        // Initialize
         IsCorrect = true;
         AnswerNumber = 1;
-        Array.Resize(ref CorrectArray, ChoiceNumber);
+        Array.Resize(ref Correct, ChoiceNumber);
 
+        // Make Data
         Sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
-        MakeShuffleSentences();
-        MakeMaskedSentences();
+        MakeShuffleSentencesArray();
+        MakeMaskedSentencesArray();
         MakeCorrectArray();
 
-        TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
-        questionNumberTextMeshProUGUI.text = $"Question {String.Format("{0:#,0}", CurrentQuestionNumber + 1)}";
-
-        TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
-        dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
-
+        // Make View
+        MakeHeader();
         MakeSentencePanel();
+        MakeRate();
         MakeWordContent();
     }
 
-    void MakeShuffleSentences()
+    void MakeShuffleSentencesArray()
     {
         Shuffles = new string[Sentences.Length];
         Array.Copy(Sentences, Shuffles, Sentences.Length);
@@ -91,7 +102,7 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    void MakeMaskedSentences()
+    void MakeMaskedSentencesArray()
     {
         Masks = new string[Sentences.Length];
         Array.Copy(Sentences, Masks, Sentences.Length);
@@ -115,10 +126,19 @@ public class PlayManager : MonoBehaviour
         {
             if (Masks[i] == MaskString)
             {
-                CorrectArray[maskNumber] = Sentences[i];
+                Correct[maskNumber] = Sentences[i];
                 maskNumber++;
             }
         }
+    }
+
+    void MakeHeader()
+    {
+        TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
+        questionNumberTextMeshProUGUI.text = $"Question {String.Format("{0:#,0}", CurrentQuestionNumber + 1)}";
+
+        TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
+        dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
     }
 
     void MakeSentencePanel()
@@ -128,7 +148,6 @@ public class PlayManager : MonoBehaviour
             GameObject.Destroy(children.gameObject);
         }
 
-        float maskPanelWidth = SentencePanel.GetComponent<RectTransform>().rect.width;
         float sx = 0, sy = 0;
         int maskNumber = 1;
         for (int i = 0; i < Sentences.Length; i++)
@@ -151,7 +170,7 @@ public class PlayManager : MonoBehaviour
             }
 
             sx += sentenceTextMeshProUGUI.preferredWidth;
-            if (sx > maskPanelWidth)
+            if (sx > SentencePanel.GetComponent<RectTransform>().rect.width)
             {
                 sx = sentenceTextMeshProUGUI.preferredWidth + SpacePx;
                 sy -= 20;
@@ -188,6 +207,20 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    void MakeRate()
+    {
+        if (TotalaAlreadyQuestionNumber == 0)
+        {
+            return;
+        }
+        string rate = ((decimal)TotalCorrectQuestionNumber / TotalaAlreadyQuestionNumber).ToString("P2");
+        string correct = String.Format("{0:#,0}", TotalCorrectQuestionNumber);
+        string total = String.Format("{0:#,0}", TotalaAlreadyQuestionNumber);
+
+        TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
+        rateTextMeshProUGUI.text = $"Rate: {rate} ({correct}/{total})";
+    }
+
     void MakeWordContent()
     {
         foreach (Transform children in WordContent.transform)
@@ -219,7 +252,7 @@ public class PlayManager : MonoBehaviour
 
     void OnClickWordButton(string word)
     {
-        if (word != CorrectArray[AnswerNumber - 1])
+        if (word != Correct[AnswerNumber - 1])
         {
             Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
             IsCorrect = false;
@@ -237,29 +270,20 @@ public class PlayManager : MonoBehaviour
             return;
         }
 
-        // [todo] 正解文を表示してから次の問題に行く
-
         if (IsCorrect)
         {
             TotalCorrectQuestionNumber++;
         }
-        TotalQuestionNumber++;
+        TotalaAlreadyQuestionNumber++;
+        CurrentQuestionNumber++;
+        SaveData();
 
-        string rate = ((decimal)TotalCorrectQuestionNumber / TotalQuestionNumber).ToString("P2");
-        string correct = String.Format("{0:#,0}", TotalCorrectQuestionNumber);
-        string total = String.Format("{0:#,0}", TotalQuestionNumber);
-
-        TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
-        rateTextMeshProUGUI.text = $"Rate: {rate} ({correct}/{total})";
-
-        if (CurrentQuestionNumber < Questions.Length - 1)
+        if (CurrentQuestionNumber < Questions.Length)
         {
-            CurrentQuestionNumber++;
             MakePlayPanel();
             return;
         }
 
-        // [todo] ある程度クリアしたら休憩のための広告表示ページを表示する
         SceneManager.LoadScene("Break");
     }
 }
