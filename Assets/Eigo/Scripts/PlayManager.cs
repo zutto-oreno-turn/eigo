@@ -269,7 +269,7 @@ public class PlayManager : MonoBehaviour
         {
             IsCorrect = false;
 
-            var image = wordButton.GetComponent<Image>();
+            Image image = wordButton.GetComponent<Image>();
             wordButton.GetComponent<Image>().color = new Color(1.0f, 0.4575472f, 0.4575472f);
             DOTween.To(
                 () => image.color,
@@ -307,19 +307,19 @@ public class PlayManager : MonoBehaviour
 
     public void OnClickNextButton()
     {
-        if (CurrentQuestionNumber < Questions.Length)
-        {
-            MakePlayPanel();
-            return;
-        } else {
-            SceneManager.LoadScene("Break");
-        }
-        // if (CurrentQuestionNumber < 2)
+        // if (CurrentQuestionNumber < Questions.Length)
         // {
         //     MakePlayPanel();
         //     return;
         // } else {
         //     SceneManager.LoadScene("Break");
         // }
+        if (CurrentQuestionNumber < 2)
+        {
+            MakePlayPanel();
+            return;
+        } else {
+            SceneManager.LoadScene("Break");
+        }
     }
 }
