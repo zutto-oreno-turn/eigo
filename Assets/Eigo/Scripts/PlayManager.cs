@@ -1,4 +1,5 @@
-﻿using Eigo.Models;
+﻿using DG.Tweening;
+using Eigo.Models;
 using System;
 using System.Collections;
 using TMPro;
@@ -58,7 +59,7 @@ public class PlayManager : MonoBehaviour
 
     void LoadData()
     {
-        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
+        PlayerPrefs.DeleteAll(); // [memo] Debug Code
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -263,15 +264,23 @@ public class PlayManager : MonoBehaviour
 
     void OnClickWordButton(string name, string word)
     {
+        GameObject wordButton = WordContent.transform.Find(name).gameObject;
         if (word != Correct[AnswerNumber - 1])
         {
-            Debug.Log("PlayManager.cs#OnClickWordButton Wrong !");
             IsCorrect = false;
+
+            var image = wordButton.GetComponent<Image>();
+            wordButton.GetComponent<Image>().color = new Color(1.0f, 0.4575472f, 0.4575472f);
+            DOTween.To(
+                () => image.color,
+                color => image.color = color,
+                new Color(1.0f, 1.0f, 1.0f),
+                1.0f
+            );
             return;
         }
         else
         {
-            GameObject wordButton = WordContent.transform.Find(name).gameObject;
             wordButton.GetComponent<Image>().color = new Color(0.6214992f, 0.9716981f, 0.5821022f);
         }
 
@@ -298,19 +307,19 @@ public class PlayManager : MonoBehaviour
 
     public void OnClickNextButton()
     {
-        // if (CurrentQuestionNumber < Questions.Length)
-        // {
-        //     MakePlayPanel();
-        //     return;
-        // } else {
-        //     SceneManager.LoadScene("Break");
-        // }
-        if (CurrentQuestionNumber < 2)
+        if (CurrentQuestionNumber < Questions.Length)
         {
             MakePlayPanel();
             return;
         } else {
             SceneManager.LoadScene("Break");
         }
+        // if (CurrentQuestionNumber < 2)
+        // {
+        //     MakePlayPanel();
+        //     return;
+        // } else {
+        //     SceneManager.LoadScene("Break");
+        // }
     }
 }
