@@ -237,6 +237,8 @@ public class PlayManager : MonoBehaviour
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(ax, ay, 0), Quaternion.identity);
             wordButton.transform.SetParent(WordContent.transform, false);
 
+            wordButton.name = $"WordButton{i}";
+
             TextMeshProUGUI wordButtonTextMeshProUGUI = wordButton.GetComponentInChildren<TextMeshProUGUI>();
             wordButtonTextMeshProUGUI.text = Shuffles[i];
 
@@ -249,7 +251,7 @@ public class PlayManager : MonoBehaviour
                 ax = -350;
                 ay -= 70;
             }
-            wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButtonTextMeshProUGUI.text));
+            wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButton.name, wordButtonTextMeshProUGUI.text));
         }
     }
 
@@ -259,7 +261,7 @@ public class PlayManager : MonoBehaviour
         nextButton.GetComponent<Button>().onClick.AddListener(() => OnClickNextButton());
     }
 
-    void OnClickWordButton(string word)
+    void OnClickWordButton(string name, string word)
     {
         if (word != Correct[AnswerNumber - 1])
         {
@@ -269,7 +271,8 @@ public class PlayManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("PlayManager.cs#OnClickWordButton Correct !");
+            GameObject wordButton = WordContent.transform.Find(name).gameObject;
+            wordButton.GetComponent<Image>().color = new Color(0.6214992f, 0.9716981f, 0.5821022f);
         }
 
         AnswerNumber++;

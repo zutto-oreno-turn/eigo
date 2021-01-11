@@ -900,7 +900,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1036018002
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1889,6 +1889,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WordButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508584278704964390, guid: eda8d9d659603d84ebc96170a7d41f55,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508584278704964390, guid: eda8d9d659603d84ebc96170a7d41f55,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508584278704964390, guid: eda8d9d659603d84ebc96170a7d41f55,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eda8d9d659603d84ebc96170a7d41f55, type: 3}
