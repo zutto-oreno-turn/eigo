@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using Eigo.Models;
+using GoogleMobileAds.Api;
 using System;
 using System.Collections;
 using TMPro;
@@ -23,6 +24,8 @@ public class PlayManager : MonoBehaviour
     const int SpacePx = 5;
     const string MaskString = "*******";
 
+    BannerView bannerView;
+
     Question[] Questions;
 
     bool IsCorrect = true;
@@ -39,7 +42,9 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        // Scene Initialize
+        // MobileAds.Initialize("ca-app-pub-3940256099942544~3347511713"); // test
+        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833"); // production
+
         LoadData();
         StartCoroutine(GetQuestion());
     }
@@ -59,7 +64,7 @@ public class PlayManager : MonoBehaviour
 
     void LoadData()
     {
-        PlayerPrefs.DeleteAll(); // [memo] Debug Code
+        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -303,23 +308,27 @@ public class PlayManager : MonoBehaviour
         MakeRate();
 
         NextPanel.SetActive(true);
+        RequestBanner();
     }
 
     public void OnClickNextButton()
     {
-        // if (CurrentQuestionNumber < Questions.Length)
-        // {
-        //     MakePlayPanel();
-        //     return;
-        // } else {
-        //     SceneManager.LoadScene("Break");
-        // }
-        if (CurrentQuestionNumber < 2)
+        if (CurrentQuestionNumber < Questions.Length)
         {
             MakePlayPanel();
+            bannerView.Destroy();
             return;
         } else {
             SceneManager.LoadScene("Break");
         }
+    }
+
+    void RequestBanner()
+    {
+        // string adUnitId = "ca-app-pub-3940256099942544/6300978111"; // test
+        string adUnitId = "ca-app-pub-3155583508878616/3502937602"; // production
+        bannerView = new BannerView(adUnitId, AdSize.IABBanner, AdPosition.Bottom);
+        AdRequest request = new AdRequest.Builder().Build();
+        bannerView.LoadAd(request);
     }
 }
