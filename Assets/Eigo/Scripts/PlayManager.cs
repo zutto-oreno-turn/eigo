@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Eigo.Common;
 using Eigo.Models;
 using GoogleMobileAds.Api;
 using System;
@@ -29,9 +30,10 @@ public class PlayManager : MonoBehaviour
     Question[] Questions;
 
     bool IsCorrect = true;
-    int CurrentQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
     int TotalaAlreadyQuestionNumber = 0;
+    int CurrentQuestionNumber = 0;
+    int CurrentQuestionNumberAfterStart = 0;
     int ChoiceNumber = 3;
     int AnswerNumber = 1;
 
@@ -42,9 +44,6 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        // MobileAds.Initialize("ca-app-pub-3940256099942544~3347511713"); // test
-        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833"); // production
-
         LoadData();
         StartCoroutine(GetQuestion());
     }
@@ -304,31 +303,28 @@ public class PlayManager : MonoBehaviour
 
         TotalaAlreadyQuestionNumber++;
         CurrentQuestionNumber++;
+        CurrentQuestionNumberAfterStart++;
         SaveData();
         MakeRate();
 
         NextPanel.SetActive(true);
-        RequestBanner();
     }
 
     public void OnClickNextButton()
     {
-        if (CurrentQuestionNumber < Questions.Length)
+        if (CurrentQuestionNumber >= Questions.Length)
         {
-            MakePlayPanel();
-            bannerView.Destroy();
-            return;
-        } else {
+            SceneParameter.BreakReason = SceneParameter.NoMore;
             SceneManager.LoadScene("Break");
+            return;
         }
-    }
 
-    void RequestBanner()
-    {
-        // string adUnitId = "ca-app-pub-3940256099942544/6300978111"; // test
-        string adUnitId = "ca-app-pub-3155583508878616/3502937602"; // production
-        bannerView = new BannerView(adUnitId, AdSize.IABBanner, AdPosition.Bottom);
-        AdRequest request = new AdRequest.Builder().Build();
-        bannerView.LoadAd(request);
+        if (CurrentQuestionNumberAfterStart > 4) {
+            SceneParameter.BreakReason = SceneParameter.Coffee;
+            SceneManager.LoadScene("Break");
+            return;
+        }
+
+        MakePlayPanel();
     }
 }
