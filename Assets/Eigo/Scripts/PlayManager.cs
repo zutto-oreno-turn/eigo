@@ -1,5 +1,7 @@
 ﻿using DG.Tweening;
+using Eigo.Common;
 using Eigo.Models;
+using GoogleMobileAds.Api;
 using System;
 using System.Collections;
 using TMPro;
@@ -23,12 +25,15 @@ public class PlayManager : MonoBehaviour
     const int SpacePx = 5;
     const string MaskString = "*******";
 
+    BannerView bannerView;
+
     Question[] Questions;
 
     bool IsCorrect = true;
-    int CurrentQuestionNumber = 0;
     int TotalCorrectQuestionNumber = 0;
     int TotalaAlreadyQuestionNumber = 0;
+    int CurrentQuestionNumber = 0;
+    int CurrentQuestionNumberAfterStart = 0;
     int ChoiceNumber = 3;
     int AnswerNumber = 1;
 
@@ -39,7 +44,6 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        // Scene Initialize
         LoadData();
         StartCoroutine(GetQuestion());
     }
@@ -59,7 +63,7 @@ public class PlayManager : MonoBehaviour
 
     void LoadData()
     {
-        PlayerPrefs.DeleteAll(); // [memo] Debug Code
+        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -299,6 +303,7 @@ public class PlayManager : MonoBehaviour
 
         TotalaAlreadyQuestionNumber++;
         CurrentQuestionNumber++;
+        CurrentQuestionNumberAfterStart++;
         SaveData();
         MakeRate();
 
@@ -307,19 +312,19 @@ public class PlayManager : MonoBehaviour
 
     public void OnClickNextButton()
     {
-        // if (CurrentQuestionNumber < Questions.Length)
-        // {
-        //     MakePlayPanel();
-        //     return;
-        // } else {
-        //     SceneManager.LoadScene("Break");
-        // }
-        if (CurrentQuestionNumber < 2)
+        if (CurrentQuestionNumber >= Questions.Length)
         {
-            MakePlayPanel();
-            return;
-        } else {
+            SceneParameter.BreakReason = SceneParameter.NoMore;
             SceneManager.LoadScene("Break");
+            return;
         }
+
+        if (CurrentQuestionNumberAfterStart > 4) {
+            SceneParameter.BreakReason = SceneParameter.Coffee;
+            SceneManager.LoadScene("Break");
+            return;
+        }
+
+        MakePlayPanel();
     }
 }
