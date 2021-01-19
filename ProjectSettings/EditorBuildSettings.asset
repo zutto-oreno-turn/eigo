@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Eigo/Scenes/Break.unity
-    guid: 0d2c49b79a707604fa4aa643ba7e0569
-  - enabled: 1
     path: Assets/Eigo/Scenes/Play.unity
     guid: 3a3f9d264dbddc143930ef84616747bf
+  - enabled: 1
+    path: Assets/Eigo/Scenes/Break.unity
+    guid: 0d2c49b79a707604fa4aa643ba7e0569
   m_configObjects: {}
