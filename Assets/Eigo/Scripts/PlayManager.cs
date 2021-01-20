@@ -27,7 +27,7 @@ public class PlayManager : MonoBehaviour
     const int SpacePx = 5;
     const string MaskString = "*******";
 
-    BannerView bannerView;
+    BannerView BannerView;
 
     Question[] Questions;
 
@@ -46,11 +46,8 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833");
-        string adUnitId = "ca-app-pub-3155583508878616/3502937602";
-        bannerView = new BannerView(adUnitId, AdSize.MediumRectangle, AdPosition.Center);
+        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
 
-        PlayerPrefs.DeleteAll(); // [memo] Debug Code
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -65,6 +62,14 @@ public class PlayManager : MonoBehaviour
         nextButtonAdPanel.GetComponent<Button>().onClick.AddListener(() => OnClickNextButtonAdPanel());
 
         StartCoroutine(GetQuestion());
+
+        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833");
+        string adUnitId = "ca-app-pub-3155583508878616/3502937602";
+        BannerView = new BannerView(adUnitId, AdSize.MediumRectangle, AdPosition.Center);
+        BannerView.Hide();
+
+        AdRequest request = new AdRequest.Builder().Build();
+        BannerView.LoadAd(request);
     }
 
     IEnumerator GetQuestion()
@@ -323,7 +328,7 @@ public class PlayManager : MonoBehaviour
             CurrentQuestionNumberAfterStart = 0;
             MakeMessageText("No more. Wait until it's tweeted.");
             AdPanel.SetActive(true);
-            LoadAdBanner();
+            BannerView.Show();
             return;
         }
 
@@ -331,7 +336,7 @@ public class PlayManager : MonoBehaviour
             CurrentQuestionNumberAfterStart = 0;
             MakeMessageText("Take a break by watching the advertisement.");
             AdPanel.SetActive(true);
-            LoadAdBanner();
+            BannerView.Show();
             return;
         }
 
@@ -343,14 +348,9 @@ public class PlayManager : MonoBehaviour
         textmeshpro.text = message;
     }
 
-    void LoadAdBanner()
-    {
-        AdRequest request = new AdRequest.Builder().Build();
-        bannerView.LoadAd(request);
-    }
-
     public void OnClickNextButtonAdPanel()
     {
+        BannerView.Hide();
         AdPanel.SetActive(false);
 
         if (CurrentQuestionNumber >= Questions.Length)
