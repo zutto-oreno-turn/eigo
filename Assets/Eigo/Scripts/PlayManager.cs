@@ -21,6 +21,8 @@ public class PlayManager : MonoBehaviour
     public GameObject WordContent;
     public GameObject WordButtonPrefab;
     public GameObject NextPanel;
+    public GameObject AdPanel;
+    public GameObject MessageText;
 
     const int SpacePx = 5;
     const string MaskString = "*******";
@@ -44,7 +46,24 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        LoadData();
+        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833");
+        string adUnitId = "ca-app-pub-3155583508878616/3502937602";
+        bannerView = new BannerView(adUnitId, AdSize.MediumRectangle, AdPosition.Center);
+
+        PlayerPrefs.DeleteAll(); // [memo] Debug Code
+        CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
+        TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
+        TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
+
+        NextPanel.SetActive(false);
+        AdPanel.SetActive(false);
+
+        GameObject nextButtonNextPanel = NextPanel.transform.Find("NextButtonNextPanel").gameObject;
+        nextButtonNextPanel.GetComponent<Button>().onClick.AddListener(() => OnClickNextButtonNextPanel());
+
+        GameObject nextButtonAdPanel = AdPanel.transform.Find("NextButtonAdPanel").gameObject;
+        nextButtonAdPanel.GetComponent<Button>().onClick.AddListener(() => OnClickNextButtonAdPanel());
+
         StartCoroutine(GetQuestion());
     }
 
@@ -59,21 +78,6 @@ public class PlayManager : MonoBehaviour
         Questions = data.questions;
 
         MakePlayPanel();
-    }
-
-    void LoadData()
-    {
-        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
-        CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
-        TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
-        TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
-    }
-
-    void SaveData()
-    {
-        PlayerPrefs.SetInt("CurrentQuestionNumber", CurrentQuestionNumber);
-        PlayerPrefs.SetInt("TotalCorrectQuestionNumber", TotalCorrectQuestionNumber);
-        PlayerPrefs.SetInt("TotalaAlreadyQuestionNumber", TotalaAlreadyQuestionNumber);
     }
 
     void MakePlayPanel()
@@ -94,7 +98,6 @@ public class PlayManager : MonoBehaviour
         MakeSentencePanel();
         MakeRate();
         MakeWordContent();
-        MakeNextPanel();
     }
 
     void MakeShuffleSentencesArray()
@@ -260,12 +263,6 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    void MakeNextPanel() {
-        NextPanel.SetActive(false);
-        GameObject nextButton = NextPanel.transform.Find("NextButton").gameObject;
-        nextButton.GetComponent<Button>().onClick.AddListener(() => OnClickNextButton());
-    }
-
     void OnClickWordButton(string name, string word)
     {
         GameObject wordButton = WordContent.transform.Find(name).gameObject;
@@ -310,18 +307,55 @@ public class PlayManager : MonoBehaviour
         NextPanel.SetActive(true);
     }
 
-    public void OnClickNextButton()
+    void SaveData()
     {
+        PlayerPrefs.SetInt("CurrentQuestionNumber", CurrentQuestionNumber);
+        PlayerPrefs.SetInt("TotalCorrectQuestionNumber", TotalCorrectQuestionNumber);
+        PlayerPrefs.SetInt("TotalaAlreadyQuestionNumber", TotalaAlreadyQuestionNumber);
+    }
+
+    public void OnClickNextButtonNextPanel()
+    {
+        NextPanel.SetActive(false);
+
         if (CurrentQuestionNumber >= Questions.Length)
         {
-            SceneParameter.BreakReason = SceneParameter.NoMore;
-            SceneManager.LoadScene("Break");
+            CurrentQuestionNumberAfterStart = 0;
+            MakeMessageText("No more. Wait until it's tweeted.");
+            AdPanel.SetActive(true);
+            LoadAdBanner();
             return;
         }
 
-        if (CurrentQuestionNumberAfterStart > 4) {
-            SceneParameter.BreakReason = SceneParameter.Coffee;
-            SceneManager.LoadScene("Break");
+        if (CurrentQuestionNumberAfterStart > 1) {
+            CurrentQuestionNumberAfterStart = 0;
+            MakeMessageText("Take a break by watching the advertisement.");
+            AdPanel.SetActive(true);
+            LoadAdBanner();
+            return;
+        }
+
+        MakePlayPanel();
+    }
+
+    void MakeMessageText(string message) {
+        TextMeshProUGUI textmeshpro = MessageText.GetComponentInChildren<TextMeshProUGUI>();
+        textmeshpro.text = message;
+    }
+
+    void LoadAdBanner()
+    {
+        AdRequest request = new AdRequest.Builder().Build();
+        bannerView.LoadAd(request);
+    }
+
+    public void OnClickNextButtonAdPanel()
+    {
+        AdPanel.SetActive(false);
+
+        if (CurrentQuestionNumber >= Questions.Length)
+        {
+            SceneManager.LoadScene("Title");
             return;
         }
 

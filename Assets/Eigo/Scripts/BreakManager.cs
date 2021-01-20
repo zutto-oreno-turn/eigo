@@ -30,9 +30,9 @@ public class BreakManager : MonoBehaviour
     void MakeMessageText() {
         TextMeshProUGUI messageTextMeshProUGUI = MessageText.GetComponentInChildren<TextMeshProUGUI>();
         if (SceneParameter.BreakReason == SceneParameter.Coffee) {
-            messageTextMeshProUGUI.text = "Take a break by watching the advertisement (^.^)b";
+            messageTextMeshProUGUI.text = "Take a break by watching the advertisement.";
         } else if (SceneParameter.BreakReason == SceneParameter.NoMore) {
-            messageTextMeshProUGUI.text = "No more. Wait until it's tweeted >_<";
+            messageTextMeshProUGUI.text = "No more. Wait until it's tweeted.";
         }
     }
 
