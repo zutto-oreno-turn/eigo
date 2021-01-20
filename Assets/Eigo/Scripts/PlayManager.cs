@@ -350,15 +350,14 @@ public class PlayManager : MonoBehaviour
 
     public void OnClickNextButtonAdPanel()
     {
-        BannerView.Hide();
-        AdPanel.SetActive(false);
-
         if (CurrentQuestionNumber >= Questions.Length)
         {
             SceneManager.LoadScene("Title");
             return;
         }
 
+        BannerView.Hide();
+        AdPanel.SetActive(false);
         MakePlayPanel();
     }
 }
