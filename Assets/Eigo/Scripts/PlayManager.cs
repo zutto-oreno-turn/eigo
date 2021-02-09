@@ -46,8 +46,6 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        // PlayerPrefs.DeleteAll(); // [memo] Debug Code
-
         CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
         TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
         TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
@@ -82,7 +80,15 @@ public class PlayManager : MonoBehaviour
         QuestionParser data = JsonUtility.FromJson<QuestionParser>(request.downloadHandler.text);
         Questions = data.questions;
 
-        MakePlayPanel();
+        Debug.Log($"CurrentQuestionNumber: {CurrentQuestionNumber}, Questions.Length: {Questions.Length}");
+        if (CurrentQuestionNumber >= Questions.Length)
+        {
+            MakeWaitScreen();
+        }
+        else
+        {
+            MakePlayPanel();
+        }
     }
 
     void MakePlayPanel()
@@ -159,10 +165,7 @@ public class PlayManager : MonoBehaviour
 
     void MakeSentencePanel()
     {
-        foreach (Transform children in SentencePanel.transform)
-        {
-            GameObject.Destroy(children.gameObject);
-        }
+        RemoveSentencePanel();
 
         float sx = 0, sy = 0;
         int maskNumber = 1;
@@ -239,10 +242,7 @@ public class PlayManager : MonoBehaviour
 
     void MakeWordContent()
     {
-        foreach (Transform children in WordContent.transform)
-        {
-            GameObject.Destroy(children.gameObject);
-        }
+        RemoveWordContent();
 
         float ax = -350, ay = 60;
         for (int i = 0; i < ChoiceNumber; i++)
@@ -265,6 +265,22 @@ public class PlayManager : MonoBehaviour
                 ay -= 70;
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButton.name, wordButtonTextMeshProUGUI.text));
+        }
+    }
+
+    void RemoveSentencePanel()
+    {
+        foreach (Transform children in SentencePanel.transform)
+        {
+            GameObject.Destroy(children.gameObject);
+        }
+    }
+
+    void RemoveWordContent()
+    {
+        foreach (Transform children in WordContent.transform)
+        {
+            GameObject.Destroy(children.gameObject);
         }
     }
 
@@ -325,25 +341,42 @@ public class PlayManager : MonoBehaviour
 
         if (CurrentQuestionNumber >= Questions.Length)
         {
-            CurrentQuestionNumberAfterStart = 0;
-            MakeMessageText("No more. Wait until it's tweeted.");
-            AdPanel.SetActive(true);
-            BannerView.Show();
+            MakeWaitScreen();
             return;
         }
 
-        if (CurrentQuestionNumberAfterStart > 1) {
-            CurrentQuestionNumberAfterStart = 0;
-            MakeMessageText("Take a break by watching the advertisement.");
-            AdPanel.SetActive(true);
-            BannerView.Show();
+        if (CurrentQuestionNumberAfterStart > 1)
+        {
+            MakeAdScreen();
             return;
         }
 
         MakePlayPanel();
     }
 
-    void MakeMessageText(string message) {
+    void MakeWaitScreen()
+    {
+        MakeMessageText("Please wait until there is a tweet.");
+        MakeAdPanel();
+    }
+
+    void MakeAdScreen()
+    {
+        MakeMessageText("Press next again.");
+        MakeAdPanel();
+    }
+
+    void MakeAdPanel()
+    {
+        CurrentQuestionNumberAfterStart = 0;
+        RemoveSentencePanel();
+        RemoveWordContent();
+        AdPanel.SetActive(true);
+        BannerView.Show();
+    }
+
+    void MakeMessageText(string message)
+    {
         TextMeshProUGUI textmeshpro = MessageText.GetComponentInChildren<TextMeshProUGUI>();
         textmeshpro.text = message;
     }
