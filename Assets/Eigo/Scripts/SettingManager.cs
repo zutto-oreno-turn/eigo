@@ -1,16 +1,32 @@
-﻿using UnityEngine;
+﻿using Eigo.Common;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SettingManager : MonoBehaviour
 {
-    void Start()
+    public GameObject RateText;
+
+    void Start() {
+        MakeRate();
+    }
+
+    void MakeRate()
     {
-        Debug.Log("SettingManager.cs#Start");
+        TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
+        rateTextMeshProUGUI.text = PlayData.GetRate();
+    }
+
+    public void OnClickClearButton()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        PlayData.LoadData();
+        MakeRate();
     }
 
     public void OnClickReturnButton()
     {
-        Debug.Log("SettingManager.cs#OnClickReturnButton");
         SceneManager.LoadScene("Title");
     }
 }

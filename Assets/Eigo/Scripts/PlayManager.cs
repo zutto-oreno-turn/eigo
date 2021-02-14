@@ -32,9 +32,6 @@ public class PlayManager : MonoBehaviour
     Question[] Questions;
 
     bool IsCorrect = true;
-    int TotalCorrectQuestionNumber = 0;
-    int TotalaAlreadyQuestionNumber = 0;
-    int CurrentQuestionNumber = 0;
     int CurrentQuestionNumberAfterStart = 0;
     int ChoiceNumber = 3;
     int AnswerNumber = 1;
@@ -46,10 +43,6 @@ public class PlayManager : MonoBehaviour
 
     void Start()
     {
-        CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
-        TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
-        TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);
-
         NextPanel.SetActive(false);
         AdPanel.SetActive(false);
 
@@ -80,8 +73,7 @@ public class PlayManager : MonoBehaviour
         QuestionParser data = JsonUtility.FromJson<QuestionParser>(request.downloadHandler.text);
         Questions = data.questions;
 
-        Debug.Log($"CurrentQuestionNumber: {CurrentQuestionNumber}, Questions.Length: {Questions.Length}");
-        if (CurrentQuestionNumber >= Questions.Length)
+        if (PlayData.CurrentQuestionNumber >= Questions.Length)
         {
             MakeWaitScreen();
         }
@@ -99,7 +91,7 @@ public class PlayManager : MonoBehaviour
         Array.Resize(ref Correct, ChoiceNumber);
 
         // Make Data
-        Sentences = Questions[CurrentQuestionNumber].sentence.Split(' ');
+        Sentences = Questions[PlayData.CurrentQuestionNumber].sentence.Split(' ');
         MakeShuffleSentencesArray();
         MakeMaskedSentencesArray();
         MakeCorrectArray();
@@ -157,10 +149,10 @@ public class PlayManager : MonoBehaviour
     void MakeHeader()
     {
         TextMeshProUGUI questionNumberTextMeshProUGUI = QuestionNumberText.GetComponentInChildren<TextMeshProUGUI>();
-        questionNumberTextMeshProUGUI.text = $"Question {String.Format("{0:#,0}", CurrentQuestionNumber + 1)}";
+        questionNumberTextMeshProUGUI.text = $"Question {String.Format("{0:#,0}", PlayData.CurrentQuestionNumber + 1)}";
 
         TextMeshProUGUI dateTextMeshProUGUI = DateText.GetComponentInChildren<TextMeshProUGUI>();
-        dateTextMeshProUGUI.text = Questions[CurrentQuestionNumber].date;
+        dateTextMeshProUGUI.text = Questions[PlayData.CurrentQuestionNumber].date;
     }
 
     void MakeSentencePanel()
@@ -228,16 +220,8 @@ public class PlayManager : MonoBehaviour
 
     void MakeRate()
     {
-        if (TotalaAlreadyQuestionNumber == 0)
-        {
-            return;
-        }
-        string rate = ((decimal)TotalCorrectQuestionNumber / TotalaAlreadyQuestionNumber).ToString("P2");
-        string correct = String.Format("{0:#,0}", TotalCorrectQuestionNumber);
-        string total = String.Format("{0:#,0}", TotalaAlreadyQuestionNumber);
-
         TextMeshProUGUI rateTextMeshProUGUI = RateText.GetComponentInChildren<TextMeshProUGUI>();
-        rateTextMeshProUGUI.text = $"Rate: {rate} ({correct}/{total})";
+        rateTextMeshProUGUI.text = PlayData.GetRate();
     }
 
     void MakeWordContent()
@@ -316,11 +300,11 @@ public class PlayManager : MonoBehaviour
 
         if (IsCorrect)
         {
-            TotalCorrectQuestionNumber++;
+            PlayData.TotalCorrectQuestionNumber++;
         }
 
-        TotalaAlreadyQuestionNumber++;
-        CurrentQuestionNumber++;
+        PlayData.TotalaAlreadyQuestionNumber++;
+        PlayData.CurrentQuestionNumber++;
         CurrentQuestionNumberAfterStart++;
         SaveData();
         MakeRate();
@@ -330,16 +314,16 @@ public class PlayManager : MonoBehaviour
 
     void SaveData()
     {
-        PlayerPrefs.SetInt("CurrentQuestionNumber", CurrentQuestionNumber);
-        PlayerPrefs.SetInt("TotalCorrectQuestionNumber", TotalCorrectQuestionNumber);
-        PlayerPrefs.SetInt("TotalaAlreadyQuestionNumber", TotalaAlreadyQuestionNumber);
+        PlayerPrefs.SetInt("CurrentQuestionNumber", PlayData.CurrentQuestionNumber);
+        PlayerPrefs.SetInt("TotalCorrectQuestionNumber", PlayData.TotalCorrectQuestionNumber);
+        PlayerPrefs.SetInt("TotalaAlreadyQuestionNumber", PlayData.TotalaAlreadyQuestionNumber);
     }
 
     public void OnClickNextButtonNextPanel()
     {
         NextPanel.SetActive(false);
 
-        if (CurrentQuestionNumber >= Questions.Length)
+        if (PlayData.CurrentQuestionNumber >= Questions.Length)
         {
             MakeWaitScreen();
             return;
@@ -385,7 +369,7 @@ public class PlayManager : MonoBehaviour
     {
         BannerView.Hide();
 
-        if (CurrentQuestionNumber >= Questions.Length)
+        if (PlayData.CurrentQuestionNumber >= Questions.Length)
         {
             SceneManager.LoadScene("Title");
             return;
