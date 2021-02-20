@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Reflection;
-using System.Collections.Generic;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,7 +48,8 @@ namespace GoogleMobileAds.Unity
             Image[] images = dummyAd.GetComponentsInChildren<Image>();
             Image adImage = images[1];
             Button button = adImage.GetComponentInChildren<Button>();
-            button.onClick.AddListener(() => {
+            button.onClick.AddListener(() =>
+            {
                 buttonBehaviour.OpenURL();
             });
 
@@ -112,9 +112,12 @@ namespace GoogleMobileAds.Unity
         // Determines whether the interstitial has loaded.
         public bool IsLoaded()
         {
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
@@ -130,9 +133,10 @@ namespace GoogleMobileAds.Unity
                 AdBehaviour.PauseGame();
                 if (OnAdOpening != null)
                 {
-                  OnAdOpening.Invoke(this, EventArgs.Empty);
+                    OnAdOpening.Invoke(this, EventArgs.Empty);
                 }
-            } else
+            }
+            else
             {
                 Debug.Log("No Ad Loaded");
             }

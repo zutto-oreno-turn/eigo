@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using UnityEngine;
-using System;
 
 public class DummyAdBehaviour : MonoBehaviour
 {
@@ -31,7 +30,7 @@ public class DummyAdBehaviour : MonoBehaviour
 
     public GameObject ShowAd(GameObject dummyAd, Vector3 position)
     {
-       return Instantiate(dummyAd, position, Quaternion.identity) as GameObject;
+        return Instantiate(dummyAd, position, Quaternion.identity) as GameObject;
     }
 
     public void DestroyAd(GameObject dummyAd)

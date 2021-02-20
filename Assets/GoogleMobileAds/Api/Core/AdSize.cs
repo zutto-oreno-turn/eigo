@@ -15,7 +15,8 @@
 namespace GoogleMobileAds.Api
 {
 
-    internal enum Orientation {
+    internal enum Orientation
+    {
         Current = 0,
         Landscape = 1,
         Portrait = 2
@@ -23,7 +24,8 @@ namespace GoogleMobileAds.Api
 
     public class AdSize
     {
-        public enum Type {
+        public enum Type
+        {
             Standard = 0,
             SmartBanner = 1,
             AnchoredAdaptive = 2
@@ -60,15 +62,18 @@ namespace GoogleMobileAds.Api
             return adSize;
         }
 
-        public static AdSize GetLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(int width) {
-          return CreateAnchoredAdaptiveAdSize(width, Orientation.Landscape);
+        public static AdSize GetLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(int width)
+        {
+            return CreateAnchoredAdaptiveAdSize(width, Orientation.Landscape);
         }
 
-        public static AdSize GetPortraitAnchoredAdaptiveBannerAdSizeWithWidth(int width) {
+        public static AdSize GetPortraitAnchoredAdaptiveBannerAdSizeWithWidth(int width)
+        {
             return CreateAnchoredAdaptiveAdSize(width, Orientation.Portrait);
         }
 
-        public static AdSize GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(int width) {
+        public static AdSize GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(int width)
+        {
             return CreateAnchoredAdaptiveAdSize(width, Orientation.Current);
         }
 
@@ -100,7 +105,7 @@ namespace GoogleMobileAds.Api
         {
             get
             {
-              return orientation;
+                return orientation;
             }
         }
 

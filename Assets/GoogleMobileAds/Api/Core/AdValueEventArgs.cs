@@ -15,8 +15,6 @@
 
 using System;
 
-using GoogleMobileAds.Api;
-
 namespace GoogleMobileAds.Api
 {
     // Event args for a paid event.

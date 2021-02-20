@@ -1,5 +1,4 @@
 #if UNITY_ANDROID
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +21,7 @@ public class ManifestProcessor : IPreprocessBuild
 {
     private const string META_AD_MANAGER_APP = "com.google.android.gms.ads.AD_MANAGER_APP";
 
-    private const string META_APPLICATION_ID  = "com.google.android.gms.ads.APPLICATION_ID";
+    private const string META_APPLICATION_ID = "com.google.android.gms.ads.APPLICATION_ID";
 
     private const string META_DELAY_APP_MEASUREMENT_INIT =
             "com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT";
@@ -45,9 +44,9 @@ public class ManifestProcessor : IPreprocessBuild
         {
             manifest = XDocument.Load(manifestPath);
         }
-        #pragma warning disable 0168
+#pragma warning disable 0168
         catch (IOException e)
-        #pragma warning restore 0168
+#pragma warning restore 0168
         {
             StopBuildWithMessage("AndroidManifest.xml is missing. Try re-importing the plugin.");
         }
@@ -71,7 +70,7 @@ public class ManifestProcessor : IPreprocessBuild
         }
 
         IEnumerable<XElement> metas = elemApplication.Descendants()
-                .Where( elem => elem.Name.LocalName.Equals("meta-data"));
+                .Where(elem => elem.Name.LocalName.Equals("meta-data"));
 
         XElement elemAdManagerEnabled = GetMetaElement(metas, META_AD_MANAGER_APP);
         if (GoogleMobileAdsSettings.Instance.IsAdManagerEnabled)

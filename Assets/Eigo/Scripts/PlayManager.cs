@@ -7,8 +7,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
@@ -54,9 +54,7 @@ public class PlayManager : MonoBehaviour
 
         StartCoroutine(GetQuestion());
 
-        MobileAds.Initialize("ca-app-pub-3155583508878616~9975036833");
-        string adUnitId = "ca-app-pub-3155583508878616/3502937602";
-        BannerView = new BannerView(adUnitId, AdSize.MediumRectangle, AdPosition.Center);
+        BannerView = new BannerView("ca-app-pub-3155583508878616/3502937602", AdSize.MediumRectangle, AdPosition.Center);
         BannerView.Hide();
 
         AdRequest request = new AdRequest.Builder().Build();
@@ -329,7 +327,7 @@ public class PlayManager : MonoBehaviour
             return;
         }
 
-        if (CurrentQuestionNumberAfterStart > 1)
+        if (CurrentQuestionNumberAfterStart > 4)
         {
             MakeAdScreen();
             return;

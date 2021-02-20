@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
 
         private IntPtr bannerClientPtr;
 
-        #region Banner callback types
+#region Banner callback types
 
         internal delegate void GADUAdViewDidReceiveAdCallback(IntPtr bannerClient);
 
@@ -44,7 +44,7 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADUAdViewPaidEventCallback(
             IntPtr bannerClient, int precision, long value, string currencyCode);
 
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
@@ -74,7 +74,7 @@ namespace GoogleMobileAds.iOS
             }
         }
 
-        #region IBannerClient implementation
+#region IBannerClient implementation
 
         // Creates a banner view.
         public void CreateBannerView(string adUnitId, AdSize adSize, AdPosition position)
@@ -234,9 +234,9 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        #endregion
+#endregion
 
-        #region Banner callback methods
+#region Banner callback methods
 
         [MonoPInvokeCallback(typeof(GADUAdViewDidReceiveAdCallback))]
         private static void AdViewDidReceiveAdCallback(IntPtr bannerClient)
@@ -321,7 +321,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as BannerClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

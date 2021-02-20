@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using GoogleMobileAds.Api;
+using GoogleMobileAds.Unity;
 using System;
 using System.Reflection;
-
-using GoogleMobileAds.Unity;
-using GoogleMobileAds.Api;
-
 using UnityEngine;
 
 namespace GoogleMobileAds.Common

@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
         private IntPtr rewardedAdPtr;
         private IntPtr rewardedAdClientPtr;
 
-        #region rewarded callback types
+#region rewarded callback types
 
         internal delegate void GADURewardedAdDidReceiveAdCallback(
             IntPtr rewardedAdClient);
@@ -52,7 +52,7 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADURewardedAdPaidEventCallback(
             IntPtr rewardedAdClient, int precision, long value, string currencyCode);
 
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
@@ -83,7 +83,7 @@ namespace GoogleMobileAds.iOS
             }
         }
 
-        #region IGoogleMobileAdsRewardedAdClient implementation
+#region IGoogleMobileAdsRewardedAdClient implementation
 
         // Creates a rewarded ad.
         public void CreateRewardedAd(string adUnitId)
@@ -171,9 +171,9 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        #endregion
+#endregion
 
-        #region Rewarded ad callback methods
+#region Rewarded ad callback methods
 
         [MonoPInvokeCallback(typeof(GADURewardedAdDidReceiveAdCallback))]
         private static void RewardedAdDidReceiveAdCallback(IntPtr rewardedAdClient)
@@ -284,7 +284,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as RewardedAdClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

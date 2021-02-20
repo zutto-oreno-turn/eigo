@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using GoogleMobileAds.Common;
 using System;
 using System.Collections.Generic;
-
-using GoogleMobileAds;
-using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.Api
 {
@@ -49,7 +47,7 @@ namespace GoogleMobileAds.Api
             {
                 if (this.OnAdDidDismissFullScreenContent != null)
                 {
-                   this.OnAdDidDismissFullScreenContent(this, args);
+                    this.OnAdDidDismissFullScreenContent(this, args);
                 }
             };
         }

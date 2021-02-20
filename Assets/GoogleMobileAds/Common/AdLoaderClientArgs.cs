@@ -11,21 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-using System;
+using GoogleMobileAds.Api;
 using System.Collections.Generic;
 
-using GoogleMobileAds.Api;
+namespace GoogleMobileAds.Common
+{
 
-namespace GoogleMobileAds.Common {
+    public class AdLoaderClientArgs
+    {
 
-    public class AdLoaderClientArgs {
+        public string AdUnitId { get; set; }
 
-      public string AdUnitId { get; set; }
+        public HashSet<NativeAdType> AdTypes { get; set; }
 
-      public HashSet<NativeAdType> AdTypes { get; set; }
-
-      // Dictionary of template Ids and whether they have a click callback registered.
-      internal Dictionary<string, bool> TemplateIds { get; set; }
+        // Dictionary of template Ids and whether they have a click callback registered.
+        internal Dictionary<string, bool> TemplateIds { get; set; }
 
     }
 

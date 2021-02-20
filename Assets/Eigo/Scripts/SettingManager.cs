@@ -7,7 +7,8 @@ public class SettingManager : MonoBehaviour
 {
     public GameObject RateText;
 
-    void Start() {
+    void Start()
+    {
         MakeRate();
     }
 

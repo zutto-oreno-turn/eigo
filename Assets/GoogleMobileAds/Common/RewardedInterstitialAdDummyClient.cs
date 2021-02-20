@@ -12,22 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using GoogleMobileAds.Api;
 using System;
 using System.Reflection;
-
-using GoogleMobileAds.Api;
 using UnityEngine;
 
 namespace GoogleMobileAds.Common
 {
-  public class RewardedInterstitialAdDummyClient : IRewardedInterstitialAdClient
-  {
-    public RewardedInterstitialAdDummyClient()
+    public class RewardedInterstitialAdDummyClient : IRewardedInterstitialAdClient
     {
-      Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
-    }
+        public RewardedInterstitialAdDummyClient()
+        {
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+        }
 
-         // Disable warnings for unused dummy ad events.
+        // Disable warnings for unused dummy ad events.
 #pragma warning disable 67
 
         public event EventHandler<EventArgs> OnAdLoaded;
@@ -49,34 +48,34 @@ namespace GoogleMobileAds.Common
 
         public void CreateRewardedInterstitialAd()
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void LoadAd(string adUnitID, AdRequest request)
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public Reward GetRewardItem()
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
-          return null;
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            return null;
         }
 
         public void Show()
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void SetServerSideVerificationOptions(ServerSideVerificationOptions serverSideVerificationOptions)
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public IResponseInfoClient GetResponseInfoClient()
         {
-          Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
-          return null;
+            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+            return null;
         }
-  }
+    }
 }

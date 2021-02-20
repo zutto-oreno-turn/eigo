@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -63,10 +62,10 @@ namespace GoogleMobileAds.Common
 
         public static void InvokeInUpdate(UnityEvent eventParam)
         {
-          ExecuteInUpdate(() =>
-          {
-              eventParam.Invoke();
-          });
+            ExecuteInUpdate(() =>
+            {
+                eventParam.Invoke();
+            });
         }
 
         public void Update()

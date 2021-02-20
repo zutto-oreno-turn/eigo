@@ -16,11 +16,11 @@ using System;
 
 namespace GoogleMobileAds.Common
 {
-  // Event that occurs when a custom native template ad loads in a client.
-  public class CustomNativeClientEventArgs : EventArgs
-  {
-      internal ICustomNativeTemplateClient nativeAdClient { get; set; }
+    // Event that occurs when a custom native template ad loads in a client.
+    public class CustomNativeClientEventArgs : EventArgs
+    {
+        internal ICustomNativeTemplateClient nativeAdClient { get; set; }
 
-      internal string assetName { get; set; }
-  }
+        internal string assetName { get; set; }
+    }
 }

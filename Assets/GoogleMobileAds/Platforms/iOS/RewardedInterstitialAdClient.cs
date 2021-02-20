@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
         private IntPtr rewardedInterstitialAdClientPtr;
         private IntPtr rewardedInterstitialAdPtr;
 
-        #region rewarded interstitial ad callback types
+#region rewarded interstitial ad callback types
 
         internal delegate void GADURewardedInterstitialAdLoadedCallback(IntPtr rewardedInterstitialAdClient);
 
@@ -40,9 +40,9 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADURewardedInterstitialAdPaidEventCallback(
             IntPtr rewardedInterstitialAdClient, int precision, long value, string currencyCode);
 
-        #endregion
+#endregion
 
-        #region full screen content callback types
+#region full screen content callback types
 
         internal delegate void GADUFailedToPresentFullScreenContentCallback(IntPtr rewardedInterstitialAdClient, string error);
 
@@ -50,7 +50,7 @@ namespace GoogleMobileAds.iOS
 
         internal delegate void GADUDidDismissFullScreenContentCallback(IntPtr rewardedInterstitialAdClient);
 
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
@@ -66,7 +66,7 @@ namespace GoogleMobileAds.iOS
 
         public event EventHandler<EventArgs> OnAdDidDismissFullScreenContent;
 
-        #region IRewardedInterstitialAdClient implementation
+#region IRewardedInterstitialAdClient implementation
 
         public void CreateRewardedInterstitialAd()
         {
@@ -138,9 +138,9 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        #endregion
+#endregion
 
-        #region rewarded interstitial ad callback methods
+#region rewarded interstitial ad callback methods
 
         [MonoPInvokeCallback(typeof(GADURewardedInterstitialAdLoadedCallback))]
         private static void RewardedInterstitialAdLoadedCallback(IntPtr rewardedInterstitialAdClient)
@@ -248,7 +248,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as RewardedInterstitialAdClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

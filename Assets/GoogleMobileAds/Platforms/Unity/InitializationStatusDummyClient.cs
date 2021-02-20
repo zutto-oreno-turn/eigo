@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace GoogleMobileAds.Unity
 {
@@ -31,7 +30,7 @@ namespace GoogleMobileAds.Unity
 
         public Dictionary<string, AdapterStatus> getAdapterStatusMap()
         {
-            Dictionary<string, AdapterStatus> dummyDictionary = new Dictionary<string,AdapterStatus>();
+            Dictionary<string, AdapterStatus> dummyDictionary = new Dictionary<string, AdapterStatus>();
             dummyDictionary.Add("ExampleClass", getAdapterStatusForClassName("ExampleClass"));
             return dummyDictionary;
         }

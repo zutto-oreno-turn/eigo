@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
         private IntPtr interstitialPtr;
         private IntPtr interstitialClientPtr;
 
-        #region Interstitial callback types
+#region Interstitial callback types
 
         internal delegate void GADUInterstitialDidReceiveAdCallback(IntPtr interstitialClient);
 
@@ -45,7 +45,7 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADUInterstitialPaidEventCallback(
             IntPtr interstitialClient, int precision, long value, string currencyCode);
 
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
@@ -75,7 +75,7 @@ namespace GoogleMobileAds.iOS
             }
         }
 
-        #region IInterstitialClient implementation
+#region IInterstitialClient implementation
 
         // Creates an interstitial ad.
         public void CreateInterstitialAd(string adUnitId)
@@ -144,9 +144,9 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        #endregion
+#endregion
 
-        #region Interstitial callback methods
+#region Interstitial callback methods
 
         [MonoPInvokeCallback(typeof(GADUInterstitialDidReceiveAdCallback))]
         private static void InterstitialDidReceiveAdCallback(IntPtr interstitialClient)
@@ -233,7 +233,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as InterstitialClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

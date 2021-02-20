@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using GoogleMobileAds.Api.Mediation;
 using System;
 using System.Collections.Generic;
-
-using GoogleMobileAds.Api.Mediation;
 
 namespace GoogleMobileAds.Api
 {

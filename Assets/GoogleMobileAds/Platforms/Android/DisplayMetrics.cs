@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 using UnityEngine;
-using System;
-using System.Collections.Generic;
 
 namespace GoogleMobileAds.Android
 {
-    public class DisplayMetrics {
+    public class DisplayMetrics
+    {
         // The logical density of the display.
         public float Density { get; protected set; }
 
@@ -27,7 +26,8 @@ namespace GoogleMobileAds.Android
         // The absolute width of the display in pixels
         public int WidthPixels { get; protected set; }
 
-        public DisplayMetrics() {
+        public DisplayMetrics()
+        {
             using (
                 AndroidJavaClass unityPlayerClass = new AndroidJavaClass(Utils.UnityActivityClassName),
                 metricsClass = new AndroidJavaClass(Utils.DisplayMetricsClassName)

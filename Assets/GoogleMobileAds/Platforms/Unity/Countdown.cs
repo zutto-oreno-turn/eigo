@@ -16,8 +16,6 @@
     After 5 seconds has elapsed, the close ad button will be set active and the user can then
     close the ad. **/
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 

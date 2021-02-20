@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using UnityEngine;
-using System;
-using System.Collections.Generic;
-
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Api.Mediation;
-using GoogleMobileAds.Common;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace GoogleMobileAds.Android
 {

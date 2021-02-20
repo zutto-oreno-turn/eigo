@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
 using UnityEditor;
 using UnityEngine;
@@ -111,7 +107,7 @@ namespace GoogleMobileAds.Editor
                         AssetDatabase.CreateFolder(MobileAdsSettingsDir, "Resources");
                     }
 
-                    instance = (GoogleMobileAdsSettings) AssetDatabase.LoadAssetAtPath(
+                    instance = (GoogleMobileAdsSettings)AssetDatabase.LoadAssetAtPath(
                         MobileAdsSettingsFile, typeof(GoogleMobileAdsSettings));
 
                     if (instance == null)

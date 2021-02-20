@@ -21,7 +21,8 @@ namespace Eigo.Common
             return $"Rate: {rate} ({correct}/{total})";
         }
 
-        public static void LoadData() {
+        public static void LoadData()
+        {
             CurrentQuestionNumber = PlayerPrefs.GetInt("CurrentQuestionNumber", 0);
             TotalCorrectQuestionNumber = PlayerPrefs.GetInt("TotalCorrectQuestionNumber", 0);
             TotalaAlreadyQuestionNumber = PlayerPrefs.GetInt("TotalaAlreadyQuestionNumber", 0);

@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Reflection;
-using System.Collections.Generic;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
-
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -54,7 +52,8 @@ namespace GoogleMobileAds.Unity
         {
             Image myImage = dummyAd.GetComponentInChildren<Image>();
             Button button = myImage.GetComponentInChildren<Button>();
-            button.onClick.AddListener(() => {
+            button.onClick.AddListener(() =>
+            {
                 buttonBehaviour.OpenURL();
             });
         }
@@ -77,7 +76,8 @@ namespace GoogleMobileAds.Unity
             {
                 LoadAndSetPrefabAd(prefabAds[adSize]);
             }
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 if (adSize == AdSize.SmartBanner || adSize.AdType == AdSize.Type.AnchoredAdaptive)
                 {
                     SetAndStretchAd(prefabAd, position, adSize);
@@ -100,7 +100,8 @@ namespace GoogleMobileAds.Unity
             {
                 LoadAndSetPrefabAd(prefabAds[adSize]);
             }
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 RectTransform rect = getRectTransform(prefabAd);
 
                 if (adSize == AdSize.SmartBanner || adSize.AdType == AdSize.Type.AnchoredAdaptive)
@@ -119,19 +120,22 @@ namespace GoogleMobileAds.Unity
         public void LoadAd(AdRequest request)
         {
 
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 ShowBannerView();
                 if (OnAdLoaded != null)
                 {
-                  OnAdLoaded.Invoke(this, EventArgs.Empty);
+                    OnAdLoaded.Invoke(this, EventArgs.Empty);
                 }
-            } else {
+            }
+            else
+            {
                 if (OnAdFailedToLoad != null)
                 {
-                  OnAdFailedToLoad.Invoke(this, new AdFailedToLoadEventArgs()
-                  {
-                      Message = "Prefab Ad is Null"
-                  });
+                    OnAdFailedToLoad.Invoke(this, new AdFailedToLoadEventArgs()
+                    {
+                        Message = "Prefab Ad is Null"
+                    });
                 }
             }
         }
@@ -160,7 +164,8 @@ namespace GoogleMobileAds.Unity
         // Returns the height of the BannerView in pixels.
         public float GetHeightInPixels()
         {
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 return getRectTransform(prefabAd).sizeDelta.y;
             }
             return 0;
@@ -169,7 +174,8 @@ namespace GoogleMobileAds.Unity
         // Returns the width of the BannerView in pixels.
         public float GetWidthInPixels()
         {
-            if (prefabAd != null) {
+            if (prefabAd != null)
+            {
                 return getRectTransform(prefabAd).sizeDelta.x;
             }
             return 0;
@@ -181,7 +187,8 @@ namespace GoogleMobileAds.Unity
             if (dummyAd != null)
             {
                 AnchorAd(dummyAd, adPosition);
-            } else
+            }
+            else
             {
                 Debug.Log("No existing banner in game");
             }
@@ -194,7 +201,8 @@ namespace GoogleMobileAds.Unity
             {
                 RectTransform rect = getRectTransform(dummyAd);
                 rect.anchoredPosition = new Vector2(x, y);
-            } else
+            }
+            else
             {
                 Debug.Log("No existing banner in game");
             }
@@ -202,7 +210,8 @@ namespace GoogleMobileAds.Unity
 
         private void SetAndStretchAd(GameObject dummyAd, AdPosition pos, AdSize adSize)
         {
-            if (dummyAd != null) {
+            if (dummyAd != null)
+            {
                 Image myImage = dummyAd.GetComponentInChildren<Image>();
                 RectTransform rect = myImage.GetComponentInChildren<RectTransform>();
 
@@ -211,12 +220,14 @@ namespace GoogleMobileAds.Unity
                 if (pos == AdPosition.Bottom || pos == AdPosition.BottomLeft || pos == AdPosition.BottomRight)
                 {
                     rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, rect.sizeDelta.y);
-                    rect.anchoredPosition = new Vector2(0, (float)rect.sizeDelta.y/2);
-                } else if (pos == AdPosition.Top || pos == AdPosition.TopLeft || pos == AdPosition.TopRight)
+                    rect.anchoredPosition = new Vector2(0, (float)rect.sizeDelta.y / 2);
+                }
+                else if (pos == AdPosition.Top || pos == AdPosition.TopLeft || pos == AdPosition.TopRight)
                 {
                     rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, rect.sizeDelta.y);
-                    rect.anchoredPosition = new Vector2(0, -(float)rect.sizeDelta.y/2);
-                } else if (pos == AdPosition.Center)
+                    rect.anchoredPosition = new Vector2(0, -(float)rect.sizeDelta.y / 2);
+                }
+                else if (pos == AdPosition.Center)
                 {
                     LoadAndSetPrefabAd("DummyAds/Banners/CENTER");
                     if (adSize.AdType == AdSize.Type.AnchoredAdaptive)
@@ -235,23 +246,27 @@ namespace GoogleMobileAds.Unity
                     {
                         rect.anchoredPosition = new Vector2(0, 0);
                     }
-                } else
+                }
+                else
                 {
                     rect.anchoredPosition = rect.position;
                 }
-            } else {
+            }
+            else
+            {
                 Debug.Log("Invalid Dummy Ad");
             }
         }
 
         private void AnchorAd(GameObject dummyAd, AdPosition position)
         {
-            if (dummyAd != null) {
+            if (dummyAd != null)
+            {
                 Image myImage = dummyAd.GetComponentInChildren<Image>();
                 RectTransform rect = myImage.GetComponentInChildren<RectTransform>();
 
-                float x = (float)rect.sizeDelta.x/2;
-                float y = (float)rect.sizeDelta.y/2;
+                float x = (float)rect.sizeDelta.x / 2;
+                float y = (float)rect.sizeDelta.y / 2;
 
                 switch (position)
                 {
@@ -298,7 +313,9 @@ namespace GoogleMobileAds.Unity
                         rect.anchoredPosition = new Vector2(0, 0);
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 Debug.Log("Invalid Dummy Ad");
             }
         }

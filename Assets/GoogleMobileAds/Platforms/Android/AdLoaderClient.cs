@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
+using System;
+using UnityEngine;
 
 namespace GoogleMobileAds.Android
 {
@@ -49,7 +47,8 @@ namespace GoogleMobileAds.Android
                         hasHandler);
                 }
             }
-            if (supportsRequestImageAssetUrls) {
+            if (supportsRequestImageAssetUrls)
+            {
                 adLoader.Call("configureReturnUrlsForImageAssets");
             }
             adLoader.Call("create");
@@ -84,15 +83,15 @@ namespace GoogleMobileAds.Android
 
         public void onCustomClick(AndroidJavaObject ad, string assetName)
         {
-          if (this.OnCustomNativeTemplateAdClicked != null)
-          {
-              CustomNativeClientEventArgs args = new CustomNativeClientEventArgs()
-              {
-                  nativeAdClient = new CustomNativeTemplateClient(ad),
-                  assetName = assetName
-              };
-              this.OnCustomNativeTemplateAdClicked(this, args);
-          }
+            if (this.OnCustomNativeTemplateAdClicked != null)
+            {
+                CustomNativeClientEventArgs args = new CustomNativeClientEventArgs()
+                {
+                    nativeAdClient = new CustomNativeTemplateClient(ad),
+                    assetName = assetName
+                };
+                this.OnCustomNativeTemplateAdClicked(this, args);
+            }
         }
     }
 }

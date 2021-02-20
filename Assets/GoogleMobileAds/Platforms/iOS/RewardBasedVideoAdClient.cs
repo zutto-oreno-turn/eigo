@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
         private IntPtr rewardBasedVideoAdPtr;
         private IntPtr rewardBasedVideoAdClientPtr;
 
-        #region reward based video callback types
+#region reward based video callback types
 
         internal delegate void GADURewardBasedVideoAdDidReceiveAdCallback(
             IntPtr rewardBasedVideoAdClient);
@@ -54,7 +54,7 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADURewardBasedVideoAdDidCompleteCallback(
             IntPtr rewardBasedVideoAdClient);
 
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
@@ -84,7 +84,7 @@ namespace GoogleMobileAds.iOS
             }
         }
 
-        #region IGoogleMobileAdsRewardBasedVideoClient implementation
+#region IGoogleMobileAdsRewardBasedVideoClient implementation
 
         // Creates a reward based video.
         public void CreateRewardBasedVideoAd()
@@ -155,9 +155,9 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        #endregion
+#endregion
 
-        #region Reward based video ad callback methods
+#region Reward based video ad callback methods
 
         [MonoPInvokeCallback(typeof(GADURewardBasedVideoAdDidReceiveAdCallback))]
         private static void RewardBasedVideoAdDidReceiveAdCallback(IntPtr rewardBasedVideoAdClient)
@@ -267,7 +267,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as RewardBasedVideoAdClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

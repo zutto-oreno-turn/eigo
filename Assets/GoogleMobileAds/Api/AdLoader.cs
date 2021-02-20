@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using GoogleMobileAds.Common;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-
-using GoogleMobileAds;
-using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.Api
 {
@@ -35,19 +32,20 @@ namespace GoogleMobileAds.Api
             this.AdTypes = new HashSet<NativeAdType>(builder.AdTypes);
 
             Dictionary<string, bool> templateIdsDictionary = new Dictionary<string, bool>();
-            foreach(string templateId in TemplateIds)
+            foreach (string templateId in TemplateIds)
             {
-              templateIdsDictionary[templateId] = false;
+                templateIdsDictionary[templateId] = false;
             }
             foreach (var keyValuePair in this.CustomNativeTemplateClickHandlers)
             {
-              templateIdsDictionary[keyValuePair.Key] = true;
+                templateIdsDictionary[keyValuePair.Key] = true;
             }
-            AdLoaderClientArgs clientArgs = new AdLoaderClientArgs(){
-                  AdUnitId = this.AdUnitId,
-                  AdTypes = this.AdTypes,
-                  TemplateIds = templateIdsDictionary
-              };
+            AdLoaderClientArgs clientArgs = new AdLoaderClientArgs()
+            {
+                AdUnitId = this.AdUnitId,
+                AdTypes = this.AdTypes,
+                TemplateIds = templateIdsDictionary
+            };
             this.adLoaderClient = MobileAds.GetClientFactory().BuildAdLoaderClient(clientArgs);
 
             Utils.CheckInitialization();

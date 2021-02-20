@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-using GoogleMobileAds;
 using GoogleMobileAds.Common;
+using System;
 
 namespace GoogleMobileAds.Api
 {
@@ -105,11 +103,13 @@ namespace GoogleMobileAds.Api
             Instance.client.SetiOSAppPauseOnBackground(pause);
         }
 
-        internal static IClientFactory GetClientFactory() {
-          if (clientFactory == null) {
-            clientFactory = new GoogleMobileAdsClientFactory();
-          }
-          return clientFactory;
+        internal static IClientFactory GetClientFactory()
+        {
+            if (clientFactory == null)
+            {
+                clientFactory = new GoogleMobileAdsClientFactory();
+            }
+            return clientFactory;
         }
 
         private static IMobileAdsClient GetMobileAdsClient()

@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
+using GoogleMobileAds.Common;
 using UnityEngine;
 using UnityEngine.UI;
-
-using GoogleMobileAds.Api;
-using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.Unity
 {
@@ -25,14 +22,17 @@ namespace GoogleMobileAds.Unity
     {
         protected static DummyAdBehaviour AdBehaviour = new GameObject().AddComponent<DummyAdBehaviour>();
         protected GameObject prefabAd, dummyAd = null;
-        public void LoadAndSetPrefabAd(string prefabName) {
+        public void LoadAndSetPrefabAd(string prefabName)
+        {
             prefabAd = Resources.Load(prefabName) as GameObject;
-            if (prefabAd == null) {
-                Debug.Log ("No Prefab found");
+            if (prefabAd == null)
+            {
+                Debug.Log("No Prefab found");
             }
         }
 
-        public RectTransform getRectTransform(GameObject prefabAd) {
+        public RectTransform getRectTransform(GameObject prefabAd)
+        {
             Image myImage = prefabAd.GetComponentInChildren<Image>();
             return myImage.GetComponent<RectTransform>();
         }
