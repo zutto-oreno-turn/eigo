@@ -4,7 +4,7 @@
   - https://play.google.com/store/apps/details?id=com.zuttoorenoturn.Eigo
 - Unity 2019.4.10f1で作成しています。
   - https://unity3d.com/get-unity/download/archive
-- 要望あればイシューを作ってください。
+- ご要望はイシューを作って頂けますか。お気軽にどうぞ！
   - https://github.com/zutto-oreno-turn/eigo/issues
-- 問題分はこちらのプログラムで生成しています。
+- 英語の問題文はこちらのプログラムで自動生成しています。
   - https://github.com/zutto-oreno-turn/question-creator
