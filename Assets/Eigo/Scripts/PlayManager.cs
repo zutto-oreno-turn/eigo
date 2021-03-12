@@ -235,7 +235,7 @@ public class PlayManager : MonoBehaviour
             wordButton.name = $"WordButton{i}";
 
             TextMeshProUGUI wordButtonTextMeshProUGUI = wordButton.GetComponentInChildren<TextMeshProUGUI>();
-            wordButtonTextMeshProUGUI.text = Shuffles[i];
+            wordButtonTextMeshProUGUI.text = GetWord(Shuffles[i]);
 
             if (ax < -200)
             {
@@ -248,6 +248,23 @@ public class PlayManager : MonoBehaviour
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButton.name, wordButtonTextMeshProUGUI.text));
         }
+    }
+
+    string GetWord(string word)
+    {
+        string result = word;
+        if (char.IsLower(word[0]))
+        {
+            return word;
+        }
+        for (int i = 1; i < word.Length; i++)
+        {
+            if (char.IsUpper(word[i]))
+            {
+                return word;
+            }
+        }
+        return word.ToLower();
     }
 
     void RemoveSentencePanel()
@@ -269,7 +286,7 @@ public class PlayManager : MonoBehaviour
     void OnClickWordButton(string name, string word)
     {
         GameObject wordButton = WordContent.transform.Find(name).gameObject;
-        if (word != Correct[AnswerNumber - 1])
+        if (word.ToLower() != Correct[AnswerNumber - 1].ToLower())
         {
             IsCorrect = false;
 
