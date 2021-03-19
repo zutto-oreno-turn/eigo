@@ -226,7 +226,7 @@ public class PlayManager : MonoBehaviour
     {
         RemoveWordContent();
 
-        float ax = -350, ay = 60;
+        float ax = 10, ay = -10;
         for (int i = 0; i < ChoiceNumber; i++)
         {
             GameObject wordButton = Instantiate(WordButtonPrefab, new Vector3(ax, ay, 0), Quaternion.identity);
@@ -237,13 +237,13 @@ public class PlayManager : MonoBehaviour
             TextMeshProUGUI wordButtonTextMeshProUGUI = wordButton.GetComponentInChildren<TextMeshProUGUI>();
             wordButtonTextMeshProUGUI.text = GetWord(Shuffles[i]);
 
-            if (ax < -200)
+            if (ax < 100)
             {
                 ax += 130;
             }
             else
             {
-                ax = -350;
+                ax = 10;
                 ay -= 70;
             }
             wordButton.GetComponent<Button>().onClick.AddListener(() => OnClickWordButton(wordButton.name, wordButtonTextMeshProUGUI.text));
